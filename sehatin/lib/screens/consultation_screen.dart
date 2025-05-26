@@ -1,0 +1,154 @@
+import 'package:flutter/material.dart';
+import '../models/user_model.dart';
+import '../../services/doctor_service.dart';
+import '../../services/channel_service.dart';
+import 'chat_screen.dart';
+
+class ConsultationScreen extends StatefulWidget {
+  final UserModel user;
+  const ConsultationScreen({Key? key, required this.user}) : super(key: key);
+
+  @override
+  State<ConsultationScreen> createState() => _ConsultationScreenState();
+}
+
+class _ConsultationScreenState extends State<ConsultationScreen> {
+  List<String> _specializations = [];
+  String? _selectedSpec;
+  String? _error;
+  bool _loading = true;
+  bool _locked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _prepare();
+  }
+
+  Future<void> _prepare() async {
+    final existing = await ChannelService.getUserChannels(
+      widget.user.id,
+      type: 'consultation',
+    );
+    if (existing.isNotEmpty) {
+      setState(() {
+        _locked = true;
+        _loading = false;
+      });
+      return;
+    }
+
+    try {
+      final doctors = await DoctorService.getAllDoctors();
+      setState(() {
+        _specializations = doctors
+            .map((d) => d.specialization)
+            .toSet()
+            .toList();
+      });
+    } catch (e) {
+      _error = 'Failed to load specializations';
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _findAndChat() async {
+    if (_selectedSpec == null) return;
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
+    try {
+      final docs = await DoctorService.getBySpecialization(_selectedSpec!);
+
+      int? chosenDoctorId;
+      for (final d in docs) {
+        final consults = await ChannelService.getDoctorConsultations(d.userId);
+        if (consults.length < 3) {
+          chosenDoctorId = d.userId;
+          break;
+        }
+      }
+
+      if (chosenDoctorId == null) {
+        setState(() {
+          _error = 'All doctors in "$_selectedSpec" are busy. Try later.';
+          _loading = false;
+        });
+        return;
+      }
+
+      final channelId = await ChannelService.createConsultationChannel(
+        widget.user.id,
+        chosenDoctorId,
+      );
+
+      if (channelId != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ChatScreen(
+              channelId: channelId,
+              user: widget.user,
+            ),
+          ),
+        );
+      } else {
+        setState(() => _error = 'Failed to create channel');
+      }
+    } catch (e) {
+      setState(() => _error = 'Error: $e');
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    if (_locked) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Consultation')),
+        body: const Center(
+          child: Text(
+            'You already have an active consultation.\nPlease finish that first.',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Consultation')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            if (_error != null) ...[
+              Text(_error!, style: const TextStyle(color: Colors.red)),
+              const SizedBox(height: 16),
+            ],
+            DropdownButtonFormField<String>(
+              value: _selectedSpec,
+              items: _specializations
+                  .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                  .toList(),
+              onChanged: (v) => setState(() => _selectedSpec = v),
+              decoration: const InputDecoration(labelText: 'Specialization'),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _findAndChat,
+              child: const Text('Find Doctor & Chat'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
