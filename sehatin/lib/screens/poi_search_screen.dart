@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/poi_model.dart';
 import '../services/poi_service.dart';
 import '../widgets/custom_text_field.dart';
+import 'poi_registration_screen.dart';
 
 class PoiSearchScreen extends StatefulWidget {
   const PoiSearchScreen({Key? key}) : super(key: key);
@@ -58,6 +59,13 @@ class _PoiSearchScreenState extends State<PoiSearchScreen> {
     super.dispose();
   }
 
+  void _createPoi() async {
+    Navigator.push<PoiModel?>(
+      context,
+      MaterialPageRoute(builder: (_) => const PoiRegistrationScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,6 +96,11 @@ class _PoiSearchScreenState extends State<PoiSearchScreen> {
                   ? const SizedBox(
                       width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                   : const Text('Search'),
+            ),
+            TextButton.icon(
+              icon: const Icon(Icons.add),
+              label: Text("didnt find your poi? register one here!"),
+              onPressed: _createPoi,
             ),
             const SizedBox(height: 16),
             if (_error != null)
