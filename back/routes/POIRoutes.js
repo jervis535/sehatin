@@ -46,8 +46,6 @@ router.get('/pois', async (req, res) => {
   // Handle verified filter
   if (verified === 'false') {
     conditions.push('verified = false');
-  } else {
-    conditions.push('verified = true');
   }
 
   if (name) {
