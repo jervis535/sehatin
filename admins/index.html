@@ -1,30 +1,48 @@
 <!DOCTYPE html>
+<!-- 
+to do list:
+1. split these up into different pages
+2. working perfectly but just need to show evidence (haven’t made api yet)
+3. make a google map link for POIs for low budget google map api
+example: https://www.google.com/maps/place/Lippo+Mall+Puri
+4. after 4 of those are done and style this should be done
+NOTE: mr.irvan also asked to make the chat between user and doctor are on real-time.(He asked for real-time demonstration)
+-->
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Admin Verification Panel</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Admin Verification Panel</h1>
-
-        <div class="section">
-            <h2>POIs to Verify</h2>
-            <ul id="poi-list"></ul>
-        </div>
-
-        <div class="section">
-            <h2>Doctors to Verify</h2>
-            <ul id="doctor-list"></ul>
-        </div>
-
-        <div class="section">
-            <h2>Customer Services to Verify</h2>
-            <ul id="customer-service-list"></ul>
-        </div>
+<div class="container">
+    <!-- Branding -->
+    <div class="header-brand">
+        <img src="logo_sehatin.jpg" alt="Sehatin Logo" class="logo" />
+        <h1 class="brand">Sehatin</h1>
     </div>
 
-    <script src="script.js"></script>
+    <h2 class="panel-title">Admin Verification Panel</h2>
+
+    <!-- Cards -->
+    <div class="card">
+        <h3>POIs to Verify</h3>
+        <ul id="poi-list"></ul>
+    </div>
+
+    <div class="card">
+        <h3>Doctors to Verify</h3>
+        <ul id="doctor-list"></ul>
+    </div>
+
+    <div class="card">
+        <h3>Customer Services to Verify</h3>    
+        <ul id="customer-service-list"></ul>
+    </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
