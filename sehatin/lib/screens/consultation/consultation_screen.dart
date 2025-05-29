@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import '../models/user_model.dart';
-import '../../services/doctor_service.dart';
+
+import '../../models/user_model.dart';
 import '../../services/channel_service.dart';
-import 'chat_screen.dart';
+import '../../services/doctor_service.dart';
+import '../chat/chat_screen.dart';
+import 'consultation_form.dart';
 
 class ConsultationScreen extends StatefulWidget {
   final UserModel user;
@@ -41,10 +43,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
     try {
       final doctors = await DoctorService.getAllDoctors();
       setState(() {
-        _specializations = doctors
-            .map((d) => d.specialization)
-            .toSet()
-            .toList();
+        _specializations = doctors.map((d) => d.specialization).toSet().toList();
       });
     } catch (e) {
       _error = 'Failed to load specializations';
@@ -125,29 +124,12 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Consultation')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            if (_error != null) ...[
-              Text(_error!, style: const TextStyle(color: Colors.red)),
-              const SizedBox(height: 16),
-            ],
-            DropdownButtonFormField<String>(
-              value: _selectedSpec,
-              items: _specializations
-                  .map((s) => DropdownMenuItem(value: s, child: Text(s)))
-                  .toList(),
-              onChanged: (v) => setState(() => _selectedSpec = v),
-              decoration: const InputDecoration(labelText: 'Specialization'),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _findAndChat,
-              child: const Text('Find Doctor & Chat'),
-            ),
-          ],
-        ),
+      body: ConsultationForm(
+        specializations: _specializations,
+        selectedSpecialization: _selectedSpec,
+        errorMessage: _error,
+        onSelectSpecialization: (spec) => setState(() => _selectedSpec = spec),
+        onSubmit: _findAndChat,
       ),
     );
   }

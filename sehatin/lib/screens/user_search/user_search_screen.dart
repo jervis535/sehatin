@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import '../models/user_model.dart';
-import '../services/user_service.dart';
+import '../../models/user_model.dart';
+import '../../services/user_service.dart';
+import 'user_search_form.dart';
+import 'user_results_list.dart';
 
 class UserSearchScreen extends StatefulWidget {
   const UserSearchScreen({super.key});
-
   @override
   State<UserSearchScreen> createState() => _UserSearchScreenState();
 }
@@ -21,9 +22,10 @@ class _UserSearchScreenState extends State<UserSearchScreen> {
       _error = null;
     });
     try {
-      _results = await UserService.fetchUsers(query: _searchCtrl.text.trim());
+      final users = await UserService.fetchUsers(query: _searchCtrl.text.trim());
+      setState(() => _results = users);
     } catch (e) {
-      _error = e.toString();
+      setState(() => _error = e.toString());
     } finally {
       setState(() => _loading = false);
     }
@@ -43,21 +45,10 @@ class _UserSearchScreenState extends State<UserSearchScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            TextField(
+            UserSearchForm(
               controller: _searchCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Search by name or email',
-                suffixIcon: Icon(Icons.search),
-              ),
-              onSubmitted: (_) => _search(),
-            ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: _loading ? null : _search,
-              child: _loading
-                  ? const SizedBox(
-                      width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Search'),
+              loading: _loading,
+              onSearch: _search,
             ),
             const SizedBox(height: 16),
             if (_error != null)
@@ -65,17 +56,9 @@ class _UserSearchScreenState extends State<UserSearchScreen> {
             if (!_loading && _results.isEmpty)
               const Text('No users found.'),
             Expanded(
-              child: ListView.separated(
-                itemCount: _results.length,
-                separatorBuilder: (_, __) => const Divider(),
-                itemBuilder: (ctx, i) {
-                  final u = _results[i];
-                  return ListTile(
-                    title: Text(u.username),
-                    subtitle: Text(u.email),
-                    onTap: () => Navigator.pop(context, u),
-                  );
-                },
+              child: UserResultsList(
+                users: _results,
+                onTap: (user) => Navigator.pop(context, user),
               ),
             ),
           ],
