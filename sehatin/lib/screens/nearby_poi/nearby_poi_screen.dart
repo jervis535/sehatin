@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/poi_model.dart';
-import '../services/poi_service.dart';
+import '../../models/poi_model.dart';
+import '../../services/poi_service.dart';
+import 'nearby_poi_list.dart';
 
 class NearbyPoiScreen extends StatefulWidget {
   final double latitude;
@@ -41,26 +42,8 @@ class _NearbyPoiScreenState extends State<NearbyPoiScreen> {
           if (snap.hasError) {
             return Center(child: Text('Error: ${snap.error}'));
           }
-          final pois = snap.data!;
-          if (pois.isEmpty) {
-            return const Center(child: Text('No nearby POIs found.'));
-          }
-          return ListView.separated(
-            itemCount: pois.length,
-            separatorBuilder: (_, __) => const Divider(),
-            itemBuilder: (ctx, i) {
-              final poi = pois[i];
-              return ListTile(
-  title: Text(poi.name),
-  subtitle: Text(
-    '${poi.category} • ${poi.address}\n'
-    '${poi.distance != null ? poi.distance!.toStringAsFixed(2) : 'N/A'} km away',
-  ),
-  isThreeLine: true,
-  onTap: () => Navigator.pop(context, poi),
-);
-            },
-          );
+          final pois = snap.data ?? [];
+          return NearbyPoiList(pois: pois);
         },
       ),
     );
