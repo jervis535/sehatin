@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sehatin/services/session_service.dart';
 import 'package:sehatin/services/auth_service.dart';
 import 'package:sehatin/models/user_model.dart';
-import 'package:sehatin/screens/login/login_screen.dart';
+import 'package:sehatin/screens/login/login_screen.dart'; 
 import 'package:sehatin/screens/home/home_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
