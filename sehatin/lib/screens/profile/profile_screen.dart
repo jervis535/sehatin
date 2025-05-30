@@ -11,14 +11,14 @@ import '../../services/session_service.dart';
 import 'profile_info_form.dart';
 import 'role_poi_section.dart';
 import 'change_password_form.dart';
-import 'logout_button.dart';
 import '../poi_search/poi_search_screen.dart';
 import '../login/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final UserModel user;
   final String token;
-  const ProfileScreen({Key? key, required this.user, required this.token}) : super(key: key);
+  const ProfileScreen({Key? key, required this.user, required this.token})
+    : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -27,11 +27,16 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _loading = true, _saving = false, _pwSaving = false;
   String? _error;
-  late TextEditingController _usernameCtrl, _emailCtrl, _telCtrl, _currentPassCtrl;
+  late TextEditingController _usernameCtrl,
+      _emailCtrl,
+      _telCtrl,
+      _currentPassCtrl;
   late TextEditingController _specCtrl, _oldPassCtrl, _newPassCtrl;
   PoiModel? _selectedPoi;
   DoctorModel? _doctor;
   CustomerServiceModel? _cs;
+
+  int _selectedIndex = 2; // default selected bottom nav index
 
   @override
   void initState() {
@@ -57,14 +62,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _doctor = await DoctorService.getByUserId(widget.user.id);
         _specCtrl.text = _doctor?.specialization ?? '';
         if (_doctor?.poiId != null) {
-          _selectedPoi = (await PoiService.fetchPois())
-              .firstWhere((p) => p.id == _doctor!.poiId);
+          _selectedPoi = (await PoiService.fetchPois()).firstWhere(
+            (p) => p.id == _doctor!.poiId,
+          );
         }
       } else if (widget.user.role == 'customer service') {
         _cs = await CustomerServiceService.getOneByUserId(widget.user.id);
         if (_cs?.poiId != null) {
-          _selectedPoi = (await PoiService.fetchPois())
-              .firstWhere((p) => p.id == _cs!.poiId);
+          _selectedPoi = (await PoiService.fetchPois()).firstWhere(
+            (p) => p.id == _cs!.poiId,
+          );
         }
       }
     } catch (e) {
@@ -114,8 +121,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           token: widget.token,
         );
       }
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Profile updated')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Profile updated')));
     } catch (e) {
       setState(() => _error = e.toString());
     } finally {
@@ -139,8 +147,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         newPassword: _newPassCtrl.text,
         token: widget.token,
       );
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Password changed')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Password changed')));
       _oldPassCtrl.clear();
       _newPassCtrl.clear();
     } catch (e) {
@@ -155,6 +164,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => LoginScreen()),
+    );
+  }
+
+  void _showChangePasswordDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (_) => AlertDialog(
+            title: const Text('Ubah Kata Sandi'),
+            content: ChangePasswordForm(
+              oldPassCtrl: _oldPassCtrl,
+              newPassCtrl: _newPassCtrl,
+              onChange: _pwSaving ? null : _changePassword,
+              isSaving: _pwSaving,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Tutup'),
+              ),
+            ],
+          ),
     );
   }
 
@@ -175,42 +206,223 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (_loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            if (_error != null)
-              Text(_error!, style: const TextStyle(color: Colors.red)),
-            ProfileInfoForm(
-              usernameCtrl: _usernameCtrl,
-              emailCtrl: _emailCtrl,
-              telCtrl: _telCtrl,
-              currentPassCtrl: _currentPassCtrl,
-              onSave: _saving ? null : _saveProfile,
-              isSaving: _saving,
+      body: Stack(
+        children: [
+          // Wave frame atas
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Image.asset(
+              'assets/wave3.png',
+              fit: BoxFit.cover,
+              height: 180,
             ),
-            if (widget.user.role == 'doctor' || widget.user.role == 'customer service')
-              RolePoiSection(
-                role: widget.user.role,
-                specCtrl: _specCtrl,
-                selectedPoi: _selectedPoi,
-                onPickPoi: _pickPoi,
-                isDoctor: widget.user.role == 'doctor',
+          ),
+
+          // Konten utama dengan safe area dan scroll
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  const SizedBox(height: 80), // space untuk avatar
+                  // Kotak abu-abu username
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 30),
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      _usernameCtrl.text.isEmpty
+                          ? 'USERNAME'
+                          : _usernameCtrl.text.toUpperCase(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                        letterSpacing: 3,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  // Profile info form
+                  ProfileInfoForm(
+                    usernameCtrl: _usernameCtrl,
+                    emailCtrl: _emailCtrl,
+                    telCtrl: _telCtrl,
+                    currentPassCtrl: _currentPassCtrl,
+                    onSave: _saving ? null : _saveProfile,
+                    isSaving: _saving,
+                    showEmail: false,
+                    showTel: false,
+                    showCurrentPass: false,
+                  ),
+
+                  if (widget.user.role == 'doctor' ||
+                      widget.user.role == 'customer service') ...[
+                    const SizedBox(height: 20),
+                    RolePoiSection(
+                      role: widget.user.role,
+                      specCtrl: _specCtrl,
+                      selectedPoi: _selectedPoi,
+                      onPickPoi: _pickPoi,
+                      isDoctor: widget.user.role == 'doctor',
+                    ),
+                  ],
+
+                  const SizedBox(height: 50),
+
+                  // Kotak merah muda menu (ubah password, keamanan & privasi, keluar)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFB87575),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildMenuItem(
+                          context,
+                          icon: Icons.lock,
+                          label: 'Ubah Kata Sandi',
+                          onTap:
+                              _pwSaving
+                                  ? null
+                                  : () => _showChangePasswordDialog(context),
+                        ),
+                        _buildDivider(),
+                        _buildMenuItem(
+                          context,
+                          icon: Icons.privacy_tip,
+                          label: 'Keamanan dan Privasi',
+                          onTap: () {
+                            // TODO: Implement navigasi ke halaman keamanan dan privasi
+                          },
+                        ),
+                        _buildDivider(),
+                        _buildMenuItem(
+                          context,
+                          icon: Icons.logout,
+                          label: 'Keluar',
+                          onTap: _logout,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 50),
+                ],
               ),
-            const Divider(height: 32),
-            ChangePasswordForm(
-              oldPassCtrl: _oldPassCtrl,
-              newPassCtrl: _newPassCtrl,
-              onChange: _pwSaving ? null : _changePassword,
-              isSaving: _pwSaving,
             ),
-            const SizedBox(height: 16),
-            LogoutButton(onLogout: _logout),
+          ),
+
+          // Avatar posisi di atas konten, tengah layar horizontal
+          Positioned(
+            top: 60,
+            left: 0,
+            right: 0,
+            child: CircleAvatar(
+              radius: 50,
+              backgroundColor: Colors.white,
+              child: Icon(Icons.person, size: 60, color: Colors.grey.shade400),
+            ),
+          ),
+          Positioned(
+            top: 40,
+            left: 5,
+            child: Image.asset(
+              'assets/logo.png',
+              width: 70,
+              height: 60,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ],
+      ),
+
+      // Footer Bottom Navigation UI tanpa routing, gambar full color
+      bottomNavigationBar: Container(
+        height: 80,
+        color: Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _bottomNavItem('HOME', 'assets/home.png', 0),
+            _bottomNavItem('KONSULTASI ONLINE', 'assets/doctor.png', 1),
+            _bottomNavItem('RIWAYAT', 'assets/history.png', 2),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _bottomNavItem(String label, String assetPath, int index) {
+    final bool isSelected = _selectedIndex == index;
+    final color =
+        isSelected ? const Color.fromARGB(255, 0, 0, 0) : Colors.black;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedIndex = index;
+          // Routing tidak diimplementasikan, ini hanya UI saja
+        });
+      },
+      behavior: HitTestBehavior.translucent,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            assetPath,
+            width: index == 1 ? 40 : 28,
+            height: index == 1 ? 40 : 28,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label.toUpperCase(),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuItem(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    VoidCallback? onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.black),
+      title: Text(
+        label,
+        style: const TextStyle(color: Colors.white, fontSize: 16),
+      ),
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+      enabled: onTap != null,
+    );
+  }
+
+  Widget _buildDivider() {
+    return const Divider(
+      height: 1,
+      color: Colors.white54,
+      indent: 24,
+      endIndent: 24,
     );
   }
 }
