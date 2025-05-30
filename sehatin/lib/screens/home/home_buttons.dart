@@ -10,11 +10,7 @@ class HomeButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
 
-  const HomeButton({
-    super.key,
-    required this.label,
-    required this.onPressed,
-  });
+  const HomeButton({super.key, required this.label, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +29,11 @@ List<Widget> buildRoleBasedButtons(BuildContext context, UserModel user) {
     buttons.add(
       HomeButton(
         label: label,
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => screen),
-        ),
+        onPressed:
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => screen),
+            ),
       ),
     );
   }

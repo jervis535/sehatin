@@ -212,7 +212,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                   const SizedBox(height: 16),
 
-                  const Divider(thickness: 1, color: Colors.white),
+                  const Divider(
+                    thickness: 1,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                  ),
                   const SizedBox(height: 16),
 
                   ElevatedButton(
