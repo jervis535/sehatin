@@ -3,6 +3,7 @@ import 'package:sehatin/services/customer_service_service.dart';
 import '../../models/user_model.dart';
 import '../../services/doctor_service.dart';
 import '../profile/profile_screen.dart';
+import '../consultation/consultation_screen.dart'; // Import consultation screen
 
 class HomeScreen extends StatefulWidget {
   final UserModel user;
@@ -121,7 +122,17 @@ class _HomePageState extends State<HomeScreen> {
                             _buildIconButton(
                               "Konsultasi Online",
                               'assets/doctor.png',
-                              () {},
+                              () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) => ConsultationScreen(
+                                          user: widget.user,
+                                        ),
+                                  ),
+                                );
+                              },
                             ),
                             _buildIconButton(
                               "Riwayat Kesehatan",
@@ -216,7 +227,7 @@ class _HomePageState extends State<HomeScreen> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: 80, // Tinggi bottom nav lebih besar agar proporsional
+              height: 80,
               color: Colors.white,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -226,7 +237,7 @@ class _HomePageState extends State<HomeScreen> {
                     'assets/doctor.png',
                     'KONSULTASI ONLINE',
                     40,
-                  ), // Doctor icon lebih besar
+                  ),
                   _bottomNavItemImage('assets/history.png', 'RIWAYAT', 28),
                 ],
               ),
