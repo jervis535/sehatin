@@ -9,6 +9,11 @@ class ProfileInfoForm extends StatelessWidget {
   final VoidCallback? onSave;
   final bool isSaving;
 
+  // Tambahkan parameter opsional untuk kontrol tampilan field
+  final bool showEmail;
+  final bool showTel;
+  final bool showCurrentPass;
+
   const ProfileInfoForm({
     Key? key,
     required this.usernameCtrl,
@@ -17,6 +22,9 @@ class ProfileInfoForm extends StatelessWidget {
     required this.currentPassCtrl,
     required this.onSave,
     required this.isSaving,
+    this.showEmail = true,
+    this.showTel = true,
+    this.showCurrentPass = true,
   }) : super(key: key);
 
   @override
@@ -24,26 +32,33 @@ class ProfileInfoForm extends StatelessWidget {
     return Column(
       children: [
         CustomTextField(controller: usernameCtrl, label: 'Username'),
-        const SizedBox(height: 8),
-        CustomTextField(controller: emailCtrl, label: 'Email'),
-        const SizedBox(height: 8),
-        CustomTextField(controller: telCtrl, label: 'Telephone'),
-        const SizedBox(height: 8),
-        CustomTextField(
-          controller: currentPassCtrl,
-          label: 'Current Password',
-          isPassword: true,
-        ),
+        if (showEmail) ...[
+          const SizedBox(height: 8),
+          CustomTextField(controller: emailCtrl, label: 'Email'),
+        ],
+        if (showTel) ...[
+          const SizedBox(height: 8),
+          CustomTextField(controller: telCtrl, label: 'Telephone'),
+        ],
+        if (showCurrentPass) ...[
+          const SizedBox(height: 8),
+          CustomTextField(
+            controller: currentPassCtrl,
+            label: 'Current Password',
+            isPassword: true,
+          ),
+        ],
         const SizedBox(height: 16),
         ElevatedButton(
           onPressed: onSave,
-          child: isSaving
-              ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Text('Save Profile'),
+          child:
+              isSaving
+                  ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                  : const Text('Save Username'),
         ),
       ],
     );
