@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sehatin/services/customer_service_service.dart';
 import '../../models/user_model.dart';
 import '../../services/doctor_service.dart';
+import '../home/home_buttons.dart';
 import '../profile/profile_screen.dart';
-import '../consultation/consultation_screen.dart'; // Import consultation screen
 
 class HomeScreen extends StatefulWidget {
   final UserModel user;
@@ -39,7 +39,8 @@ class _HomePageState extends State<HomeScreen> {
   }
 
   Future<void> _checkVerificationStatus() async {
-    switch (widget.user.role) {
+    final roleLower = widget.user.role?.trim().toLowerCase() ?? '';
+    switch (roleLower) {
       case 'doctor':
         final doctor = await DoctorService.getByUserId(widget.user.id);
         isVerified = doctor?.verified ?? false;
@@ -53,7 +54,6 @@ class _HomePageState extends State<HomeScreen> {
       default:
         isVerified = true;
     }
-
     setState(() => loading = false);
   }
 
@@ -62,7 +62,6 @@ class _HomePageState extends State<HomeScreen> {
     if (loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-
     if (isVerified == false) {
       return Scaffold(
         appBar: AppBar(title: const Text('Home')),
@@ -75,6 +74,22 @@ class _HomePageState extends State<HomeScreen> {
         ),
       );
     }
+
+    final roleButtons = buildRoleBasedButtons(context, widget.user);
+
+    final profileButton = RoleBasedButton(
+      label: 'Profil',
+      iconWidget: const Icon(Icons.person, size: 50, color: Colors.grey),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (_) => ProfileScreen(user: widget.user, token: widget.token),
+          ),
+        );
+      },
+    );
 
     return Scaffold(
       backgroundColor: const Color(0xFF49568B),
@@ -94,6 +109,7 @@ class _HomePageState extends State<HomeScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
@@ -102,101 +118,23 @@ class _HomePageState extends State<HomeScreen> {
                         width: 100,
                         height: 100,
                       ),
-                      SizedBox(height: 130),
-                      SizedBox(width: 10),
                     ],
                   ),
                   const SizedBox(height: 50),
+
+                  // Tombol role-based + profil
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            _buildIconButton(
-                              "Info Lokasi Klinik",
-                              'assets/maps.png',
-                              () {},
-                            ),
-                            _buildIconButton(
-                              "Konsultasi Online",
-                              'assets/doctor.png',
-                              () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) => ConsultationScreen(
-                                          user: widget.user,
-                                        ),
-                                  ),
-                                );
-                              },
-                            ),
-                            _buildIconButton(
-                              "Riwayat Kesehatan",
-                              'assets/history.png',
-                              () {},
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            _buildIconButton(
-                              "Pendaftaran Layanan Medis",
-                              'assets/pendaftaran.png',
-                              () {},
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) => ProfileScreen(
-                                          user: widget.user,
-                                          token: widget.token,
-                                        ),
-                                  ),
-                                );
-                              },
-                              child: Column(
-                                children: const [
-                                  CircleAvatar(
-                                    radius: 36,
-                                    backgroundColor: Color(0xFFF4F8FC),
-                                    child: Icon(
-                                      Icons.person,
-                                      size: 50,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  SizedBox(height: 7),
-                                  SizedBox(
-                                    width: 80,
-                                    child: Text(
-                                      'Profil',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 40),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                    child: Wrap(
+                      spacing: 20,
+                      runSpacing: 20,
+                      alignment: WrapAlignment.center,
+                      children: [...roleButtons, profileButton],
                     ),
                   ),
+
                   const SizedBox(height: 40),
+
                   Container(
                     padding: const EdgeInsets.all(12),
                     margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -219,11 +157,13 @@ class _HomePageState extends State<HomeScreen> {
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 100),
                 ],
               ),
             ),
           ),
+
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -240,37 +180,6 @@ class _HomePageState extends State<HomeScreen> {
                   ),
                   _bottomNavItemImage('assets/history.png', 'RIWAYAT', 28),
                 ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildIconButton(String label, String assetPath, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 35,
-            backgroundColor: const Color(0xFFF4F8FC),
-            child: Padding(
-              padding: const EdgeInsets.all(6.0),
-              child: Image.asset(assetPath, width: 30, height: 30),
-            ),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: 80,
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
               ),
             ),
           ),
