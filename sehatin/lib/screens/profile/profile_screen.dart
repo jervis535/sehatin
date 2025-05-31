@@ -343,10 +343,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: GestureDetector(
               onTap: () => Navigator.pop(context), // Fungsi back
               child: Container(
-                width: 0,
+                width: 50,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFB87575), // Background merah
+                  color: Colors.transparent, // Background merah
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Center(
