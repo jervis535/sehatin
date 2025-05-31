@@ -23,19 +23,6 @@ class _HomePageState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _checkVerificationStatus();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      for (final path in [
-        'assets/wave2.png',
-        'assets/logo.png',
-        'assets/maps.png',
-        'assets/doctor.png',
-        'assets/history.png',
-        'assets/pendaftaran.png',
-      ]) {
-        precacheImage(AssetImage(path), context);
-      }
-    });
   }
 
   Future<void> _checkVerificationStatus() async {

@@ -24,7 +24,20 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Your Channels')),
+      backgroundColor: const Color(0xFFF7EAEA),
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 52, 43, 182),
+        elevation: 0,
+        leading: BackButton(color: const Color.fromARGB(255, 255, 255, 255)),
+        title: const Text(
+          'Channel Saya',
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 255, 255),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: FutureBuilder<List<ChannelModel>>(
         future: _channelsFuture,
         builder: (context, snapshot) {
@@ -32,20 +45,42 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(
+              child: Text(
+                'Terjadi kesalahan: ${snapshot.error}',
+                style: const TextStyle(color: Colors.red),
+              ),
+            );
           }
 
           final channels = snapshot.data!;
           if (channels.isEmpty) {
-            return const Center(child: Text('No channels found.'));
+            return const Center(
+              child: Text('Belum ada channel.', style: TextStyle(fontSize: 16)),
+            );
           }
 
           return ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             itemCount: channels.length,
             itemBuilder: (context, i) {
-              return ChannelListTile(
-                channel: channels[i],
-                currentUser: widget.user,
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 6,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: ChannelListTile(
+                  channel: channels[i],
+                  currentUser: widget.user,
+                ),
               );
             },
           );
