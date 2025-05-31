@@ -335,20 +335,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Icon(Icons.person, size: 60, color: Colors.grey.shade400),
             ),
           ),
+
+          // Gantikan logo dengan tombol back di kiri atas
           Positioned(
             top: 40,
-            left: 5,
-            child: Image.asset(
-              'assets/logo.png',
-              width: 70,
-              height: 60,
-              fit: BoxFit.contain,
+            left: 12,
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context), // Fungsi back
+              child: Container(
+                width: 0,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFB87575), // Background merah
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Center(
+                  child: Icon(Icons.arrow_back, color: Colors.white, size: 30),
+                ),
+              ),
             ),
           ),
         ],
       ),
-
-      // Footer Bottom Navigation UI tanpa routing, gambar full color
       bottomNavigationBar: Container(
         height: 80,
         color: Colors.white,
