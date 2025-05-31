@@ -114,10 +114,9 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
           title: const Text('Consultation'),
           backgroundColor: const Color.fromARGB(255, 52, 43, 182),
           foregroundColor:
-              Colors.white, // ini untuk teks dan ikon back jadi putih
-          iconTheme: const IconThemeData(
-            color: Colors.white,
-          ), // untuk ikon back
+              Colors.white,
+          iconTheme: const IconThemeData(color: Colors.white,
+          ), 
         ),
         body: const Center(
           child: Text(

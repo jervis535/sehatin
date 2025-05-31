@@ -43,7 +43,7 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: const Color.fromARGB(255, 52, 43, 182),
         elevation: 0,
         title: const Text(
-          'Konsultasi Online',
+          'Chat',
           style: TextStyle(
             color: Color.fromARGB(255, 255, 255, 255),
             fontWeight: FontWeight.bold,

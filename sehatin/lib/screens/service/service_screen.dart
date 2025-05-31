@@ -29,7 +29,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
   }
 
   Future<void> _checkUserLock() async {
-    final existing = await ChannelService.getUserServiceChannels(widget.user.id);
+    final existing = await ChannelService.getUserServiceChannels(
+      widget.user.id,
+    );
     if (existing.isNotEmpty) {
       setState(() {
         _error = 'You already have an active service request.';
@@ -48,7 +50,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
 
     final poi = await Navigator.push<PoiModel?>(
       context,
-      MaterialPageRoute(builder: (_) => NearbyPoiScreen(latitude: lat, longitude: lng)),
+      MaterialPageRoute(
+        builder: (_) => NearbyPoiScreen(latitude: lat, longitude: lng),
+      ),
     );
     if (poi == null) return;
 
@@ -70,12 +74,18 @@ class _ServiceScreenState extends State<ServiceScreen> {
         return;
       }
 
-      final channelId = await ChannelService.createServiceChannel(widget.user.id, chosenAgentId);
+      final channelId = await ChannelService.createServiceChannel(
+        widget.user.id,
+        chosenAgentId,
+      );
       if (channelId != null) {
         if (mounted) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => ChatScreen(channelId: channelId, user: widget.user)),
+            MaterialPageRoute(
+              builder:
+                  (_) => ChatScreen(channelId: channelId, user: widget.user),
+            ),
           );
         }
       } else {
@@ -90,7 +100,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
 
   Future<int?> _chooseAvailableAgent(List<dynamic> agents) async {
     for (final agent in agents) {
-      final channels = await ChannelService.getAgentServiceChannels(agent.userId);
+      final channels = await ChannelService.getAgentServiceChannels(
+        agent.userId,
+      );
       if (channels.length < 3) return agent.userId;
     }
     return null;
@@ -113,7 +125,13 @@ class _ServiceScreenState extends State<ServiceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Service')),
+      backgroundColor: const Color(0xFFF7EAEA),
+      appBar: AppBar(
+        title: const Text('Service'),
+        backgroundColor: const Color.fromARGB(255, 52, 43, 182),
+        foregroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -122,9 +140,14 @@ class _ServiceScreenState extends State<ServiceScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loading ? null : _pickPoiAndConnect,
-              child: _loading
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Find Service Agent'),
+              child:
+                  _loading
+                      ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                      : const Text('Find Service Agent'),
             ),
             const SizedBox(height: 16),
             if (_error != null) ErrorMessage(message: _error!),
