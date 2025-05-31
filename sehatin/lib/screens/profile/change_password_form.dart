@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ChangePasswordForm extends StatelessWidget {
+class ChangePasswordForm extends StatefulWidget {
   final TextEditingController oldPassCtrl;
   final TextEditingController newPassCtrl;
   final VoidCallback? onChange;
@@ -15,9 +15,17 @@ class ChangePasswordForm extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _ChangePasswordFormState createState() => _ChangePasswordFormState();
+}
+
+class _ChangePasswordFormState extends State<ChangePasswordForm> {
+  bool _obscureOld = true;
+  bool _obscureNew = true;
+
+  @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min, // agar dialog sesuai isi
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
@@ -31,8 +39,8 @@ class ChangePasswordForm extends StatelessWidget {
         const SizedBox(height: 16),
 
         TextField(
-          controller: oldPassCtrl,
-          obscureText: true,
+          controller: widget.oldPassCtrl,
+          obscureText: _obscureOld,
           decoration: InputDecoration(
             labelText: 'Kata Sandi Lama',
             labelStyle: const TextStyle(color: Colors.grey),
@@ -42,6 +50,17 @@ class ChangePasswordForm extends StatelessWidget {
             focusedBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Color(0xFFB87575)),
             ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscureOld ? Icons.visibility_off : Icons.visibility,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                setState(() {
+                  _obscureOld = !_obscureOld;
+                });
+              },
+            ),
           ),
           style: const TextStyle(color: Colors.black87),
         ),
@@ -49,8 +68,8 @@ class ChangePasswordForm extends StatelessWidget {
         const SizedBox(height: 16),
 
         TextField(
-          controller: newPassCtrl,
-          obscureText: true,
+          controller: widget.newPassCtrl,
+          obscureText: _obscureNew,
           decoration: InputDecoration(
             labelText: 'Kata Sandi Baru',
             labelStyle: const TextStyle(color: Colors.grey),
@@ -59,6 +78,17 @@ class ChangePasswordForm extends StatelessWidget {
             ),
             focusedBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Color(0xFFB87575)),
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscureNew ? Icons.visibility_off : Icons.visibility,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                setState(() {
+                  _obscureNew = !_obscureNew;
+                });
+              },
             ),
           ),
           style: const TextStyle(color: Colors.black87),
@@ -69,7 +99,7 @@ class ChangePasswordForm extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: onChange,
+            onPressed: widget.onChange,
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFB87575),
               foregroundColor: Colors.white,
@@ -79,7 +109,7 @@ class ChangePasswordForm extends StatelessWidget {
               ),
             ),
             child:
-                isSaving
+                widget.isSaving
                     ? const SizedBox(
                       width: 20,
                       height: 20,
