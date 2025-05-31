@@ -7,7 +7,8 @@ class CreateMedicalRecordScreen extends StatefulWidget {
   const CreateMedicalRecordScreen({super.key});
 
   @override
-  State<CreateMedicalRecordScreen> createState() => _CreateMedicalRecordScreenState();
+  State<CreateMedicalRecordScreen> createState() =>
+      _CreateMedicalRecordScreenState();
 }
 
 class _CreateMedicalRecordScreenState extends State<CreateMedicalRecordScreen> {
@@ -20,7 +21,17 @@ class _CreateMedicalRecordScreenState extends State<CreateMedicalRecordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Medical Record')),
+      appBar: AppBar(
+        title: const Text('Create Medical Record'),
+        backgroundColor: const Color.fromARGB(255, 52, 43, 182),
+        elevation: 0,
+        foregroundColor: Colors.white,
+        titleTextStyle: const TextStyle(
+          color: Color.fromARGB(255, 255, 255, 255), // putih
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(

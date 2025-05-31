@@ -24,7 +24,12 @@ class _MedicalRecordScreenState extends State<MedicalRecordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Medical History')),
+      appBar: AppBar(
+        title: const Text('Medical History'),
+        backgroundColor: const Color.fromARGB(255, 52, 43, 182),
+        elevation: 0,
+        foregroundColor: Colors.white,
+      ),
       body: FutureBuilder<List<MedicalRecord>>(
         future: _futureHistory,
         builder: (context, snapshot) {

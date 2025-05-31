@@ -22,7 +22,9 @@ class _UserSearchScreenState extends State<UserSearchScreen> {
       _error = null;
     });
     try {
-      final users = await UserService.fetchUsers(query: _searchCtrl.text.trim());
+      final users = await UserService.fetchUsers(
+        query: _searchCtrl.text.trim(),
+      );
       setState(() => _results = users);
     } catch (e) {
       setState(() => _error = e.toString());
@@ -40,7 +42,17 @@ class _UserSearchScreenState extends State<UserSearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Select User')),
+      appBar: AppBar(
+        title: const Text('Select User'),
+        backgroundColor: const Color.fromARGB(255, 52, 43, 182),
+        elevation: 0,
+        foregroundColor: Colors.white,
+        titleTextStyle: const TextStyle(
+          color: Color.fromARGB(255, 255, 255, 255), // putih
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -53,8 +65,7 @@ class _UserSearchScreenState extends State<UserSearchScreen> {
             const SizedBox(height: 16),
             if (_error != null)
               Text(_error!, style: const TextStyle(color: Colors.red)),
-            if (!_loading && _results.isEmpty)
-              const Text('No users found.'),
+            if (!_loading && _results.isEmpty) const Text('No users found.'),
             Expanded(
               child: UserResultsList(
                 users: _results,
