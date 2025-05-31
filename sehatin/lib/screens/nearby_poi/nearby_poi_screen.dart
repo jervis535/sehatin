@@ -32,7 +32,16 @@ class _NearbyPoiScreenState extends State<NearbyPoiScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Pick a Nearby POI')),
+      backgroundColor: const Color(0xFFF7EAEA),
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 52, 43, 182),
+        elevation: 0,
+        leading: BackButton(color: const Color.fromARGB(255, 255, 255, 255)),
+        title: const Text(
+          'Pick a Nearby POI',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
       body: FutureBuilder<List<PoiModel>>(
         future: _futurePois,
         builder: (context, snap) {
