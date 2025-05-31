@@ -43,7 +43,8 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
     try {
       final doctors = await DoctorService.getAllDoctors();
       setState(() {
-        _specializations = doctors.map((d) => d.specialization).toSet().toList();
+        _specializations =
+            doctors.map((d) => d.specialization).toSet().toList();
       });
     } catch (e) {
       _error = 'Failed to load specializations';
@@ -88,10 +89,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => ChatScreen(
-              channelId: channelId,
-              user: widget.user,
-            ),
+            builder: (_) => ChatScreen(channelId: channelId, user: widget.user),
           ),
         );
       } else {
@@ -112,7 +110,15 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
 
     if (_locked) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Consultation')),
+        appBar: AppBar(
+          title: const Text('Consultation'),
+          backgroundColor: const Color.fromARGB(255, 52, 43, 182),
+          foregroundColor:
+              Colors.white, // ini untuk teks dan ikon back jadi putih
+          iconTheme: const IconThemeData(
+            color: Colors.white,
+          ), // untuk ikon back
+        ),
         body: const Center(
           child: Text(
             'You already have an active consultation.\nPlease finish that first.',
@@ -123,7 +129,12 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Consultation')),
+      appBar: AppBar(
+        title: const Text('Consultation'),
+        backgroundColor: const Color.fromARGB(255, 52, 43, 182),
+        foregroundColor: Colors.white, // teks & ikon back putih
+        iconTheme: const IconThemeData(color: Colors.white), // ikon back putih
+      ),
       body: ConsultationForm(
         specializations: _specializations,
         selectedSpecialization: _selectedSpec,
