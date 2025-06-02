@@ -10,13 +10,13 @@ class RolePoiSection extends StatelessWidget {
   final bool isDoctor;
 
   const RolePoiSection({
-    Key? key,
+    super.key,
     required this.role,
     required this.specCtrl,
     required this.selectedPoi,
     required this.onPickPoi,
     required this.isDoctor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

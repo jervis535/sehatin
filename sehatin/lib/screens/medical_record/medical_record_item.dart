@@ -4,7 +4,7 @@ import '../../models/medical_record_model.dart';
 class MedicalRecordItem extends StatelessWidget {
   final MedicalRecord record;
 
-  const MedicalRecordItem({Key? key, required this.record}) : super(key: key);
+  const MedicalRecordItem({super.key, required this.record});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class MedicalRecordItem extends StatelessWidget {
             ),
 
             // Catatan Tambahan (Opsional)
-            if (record.notes?.isNotEmpty == true) ...[
+            if (record.notes.isNotEmpty == true) ...[
               const SizedBox(height: 12),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +63,7 @@ class MedicalRecordItem extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Catatan: ${record.notes!}',
+                      'Catatan: ${record.notes}',
                       style: const TextStyle(fontSize: 14, color: Colors.grey),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,

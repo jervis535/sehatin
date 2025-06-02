@@ -5,8 +5,7 @@ class UserResultsList extends StatelessWidget {
   final List<UserModel> users;
   final ValueChanged<UserModel> onTap;
 
-  const UserResultsList({Key? key, required this.users, required this.onTap})
-    : super(key: key);
+  const UserResultsList({super.key, required this.users, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

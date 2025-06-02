@@ -4,7 +4,7 @@ import '../../models/poi_model.dart';
 class PoiListTile extends StatelessWidget {
   final PoiModel poi;
 
-  const PoiListTile({Key? key, required this.poi}) : super(key: key);
+  const PoiListTile({super.key, required this.poi});
 
   @override
   Widget build(BuildContext context) {

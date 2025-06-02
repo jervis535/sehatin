@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class ImageViewScreen extends StatelessWidget {
   final Uint8List imageBytes;
 
-  const ImageViewScreen({Key? key, required this.imageBytes}) : super(key: key);
+  const ImageViewScreen({super.key, required this.imageBytes});
 
   @override
   Widget build(BuildContext context) {

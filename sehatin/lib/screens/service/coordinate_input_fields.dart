@@ -5,10 +5,10 @@ class CoordinateInputFields extends StatelessWidget {
   final TextEditingController lngCtrl;
 
   const CoordinateInputFields({
-    Key? key,
+    super.key,
     required this.latCtrl,
     required this.lngCtrl,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

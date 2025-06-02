@@ -7,12 +7,12 @@ class ChangePasswordForm extends StatefulWidget {
   final bool isSaving;
 
   const ChangePasswordForm({
-    Key? key,
+    super.key,
     required this.oldPassCtrl,
     required this.newPassCtrl,
     required this.onChange,
     required this.isSaving,
-  }) : super(key: key);
+  });
 
   @override
   _ChangePasswordFormState createState() => _ChangePasswordFormState();

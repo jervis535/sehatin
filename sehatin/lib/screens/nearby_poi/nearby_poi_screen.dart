@@ -8,10 +8,10 @@ class NearbyPoiScreen extends StatefulWidget {
   final double longitude;
 
   const NearbyPoiScreen({
-    Key? key,
+    super.key,
     required this.latitude,
     required this.longitude,
-  }) : super(key: key);
+  });
 
   @override
   State<NearbyPoiScreen> createState() => _NearbyPoiScreenState();
