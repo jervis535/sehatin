@@ -40,28 +40,58 @@ class _PoiSearchScreenState extends State<PoiSearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Search POIs')),
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 52, 43, 182),
+        elevation: 0,
+        foregroundColor: Colors.white,
+        title: const Text(
+          'Search POIs',
+          style: TextStyle(color: Colors.white, fontSize: 20),
+        ),
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            PoiSearchForm(
-              onResults: _updateResults,
-              setLoading: _setLoading,
-              setError: _setError,
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: PoiSearchForm(
+                  onResults: _updateResults,
+                  setLoading: _setLoading,
+                  setError: _setError,
+                ),
+              ),
             ),
+            const SizedBox(height: 10),
             TextButton.icon(
-              icon: const Icon(Icons.add),
-              label: const Text("Didn't find your POI? Register one here!"),
+              icon: const Icon(
+                Icons.add_circle_outline,
+                color: Color.fromARGB(255, 52, 43, 182),
+              ),
+              label: const Text("Register a new POI"),
               onPressed: _createPoi,
+              style: TextButton.styleFrom(foregroundColor: Colors.black),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
             if (_error != null)
-              Text(_error!, style: const TextStyle(color: Colors.red)),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  _error!,
+                  style: const TextStyle(color: Colors.red, fontSize: 14),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             Expanded(
-              child: _loading
-                  ? const Center(child: CircularProgressIndicator())
-                  : PoiResultList(pois: _results),
+              child:
+                  _loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : PoiResultList(pois: _results),
             ),
           ],
         ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../services/poi_service.dart';
-import '../../widgets/custom_text_field.dart';
 import 'submit_button.dart';
 
 class PoiForm extends StatefulWidget {
@@ -63,31 +62,164 @@ class _PoiFormState extends State<PoiForm> {
     return Form(
       key: _formKey,
       child: ListView(
+        padding: const EdgeInsets.all(16),
         children: [
-          CustomTextField(controller: _nameCtrl, label: 'Name'),
-          const SizedBox(height: 8),
-          CustomTextField(controller: _categoryCtrl, label: 'Category'),
-          const SizedBox(height: 8),
-          CustomTextField(controller: _addressCtrl, label: 'Address'),
-          const SizedBox(height: 8),
-          CustomTextField(
-            controller: _latCtrl,
-            label: 'Latitude',
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          // Name Field
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: TextFormField(
+                controller: _nameCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Name',
+                  border: InputBorder.none,
+                  labelStyle: TextStyle(color: Colors.grey),
+                  contentPadding: EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
           ),
-          const SizedBox(height: 8),
-          CustomTextField(
-            controller: _lngCtrl,
-            label: 'Longitude',
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          const SizedBox(height: 12),
+
+          // Category Field
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: TextFormField(
+                controller: _categoryCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Category',
+                  border: InputBorder.none,
+                  labelStyle: TextStyle(color: Colors.grey),
+                  contentPadding: EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
           ),
+          const SizedBox(height: 12),
+
+          // Address Field
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: TextFormField(
+                controller: _addressCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Address',
+                  border: InputBorder.none,
+                  labelStyle: TextStyle(color: Colors.grey),
+                  contentPadding: EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // Latitude Field
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: TextFormField(
+                controller: _latCtrl,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                  labelText: 'Latitude',
+                  border: InputBorder.none,
+                  labelStyle: TextStyle(color: Colors.grey),
+                  contentPadding: EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // Longitude Field
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: TextFormField(
+                controller: _lngCtrl,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(
+                  labelText: 'Longitude',
+                  border: InputBorder.none,
+                  labelStyle: TextStyle(color: Colors.grey),
+                  contentPadding: EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+          ),
+
           const SizedBox(height: 16),
+
+          // Error Message
           if (_error != null)
-            Text(_error!, style: const TextStyle(color: Colors.red)),
-          SubmitButton(
-            loading: _loading,
-            onPressed: _submit,
-          ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                _error!,
+                style: const TextStyle(color: Colors.red),
+                textAlign: TextAlign.center,
+              ),
+            ),
+
+          // Submit Button
+          SubmitButton(loading: _loading, onPressed: _submit),
         ],
       ),
     );
