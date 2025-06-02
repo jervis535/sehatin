@@ -184,3 +184,53 @@ async function loadData() {
 document.addEventListener('DOMContentLoaded', () => {
   loadData();
 });
+
+const ctx = document.getElementById('dataChart').getContext('2d');
+
+const dataChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Consultation', 'Service'], // 2 kategori
+    datasets: [{
+      label: 'Value',
+      data: [3, 3],  // nilai bar Consultation=3, Service=3
+      backgroundColor: ['rgba(54, 162, 235, 0.7)', 'rgba(255, 99, 132, 0.7)'],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      title: {
+        display: true,
+        text: 'CHANNELS',
+        font: {
+          size: 18,
+          weight: 'bold'
+        }
+      },
+      legend: {
+        display: false
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 6,
+        title: {
+          display: true,
+          text: 'Chat Per Day'
+        },
+        ticks: {
+          stepSize: 1
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'User Chats'
+        }
+      }
+    }
+  }
+});
