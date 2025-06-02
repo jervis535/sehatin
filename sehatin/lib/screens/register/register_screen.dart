@@ -12,6 +12,7 @@ import '../poi_search/poi_search_screen.dart';
 import 'credential_fields.dart';
 import 'role_selector.dart';
 import 'role_specific_fields.dart';
+import '../login/login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -69,7 +70,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     // validate role‐fields
-    if ((_selectedRole == 'doctor' && (_specializationCtrl.text.isEmpty || _selectedPoi == null)) ||
+    if ((_selectedRole == 'doctor' &&
+            (_specializationCtrl.text.isEmpty || _selectedPoi == null)) ||
         (_selectedRole == 'customer service' && _selectedPoi == null)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all required fields')),
@@ -89,7 +91,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         password: _passwordCtrl.text.trim(),
         name: _nameCtrl.text.trim(),
         role: _selectedRole,
-        specialization: _selectedRole == 'doctor' ? _specializationCtrl.text.trim() : null,
+        specialization:
+            _selectedRole == 'doctor' ? _specializationCtrl.text.trim() : null,
         poiId: _selectedPoi?.id.toString(),
       );
       final user = resp['user'], token = resp['token'];
@@ -106,50 +109,137 @@ class _RegisterScreenState extends State<RegisterScreen> {
         MaterialPageRoute(builder: (_) => HomeScreen(user: user, token: token)),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              CredentialFields(
-                emailCtrl: _emailCtrl,
-                passwordCtrl: _passwordCtrl,
-                nameCtrl: _nameCtrl,
+      backgroundColor: const Color(0xFFFCEEEE),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                // Custom Wave Background
+                SizedBox(
+                  height: 220,
+                  width: double.infinity,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Image.asset(
+                      'assets/wave.png', // pastikan wave.png ada di assets
+                      fit: BoxFit.cover,
+                      height: 220,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 120,
+                  left: 0,
+                  right: 0,
+                  child: CircleAvatar(
+                    radius: 80,
+                    backgroundColor: Colors.white,
+                    child: Icon(Icons.person, size: 80, color: Colors.grey),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 90),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    CredentialFields(
+                      emailCtrl: _emailCtrl,
+                      passwordCtrl: _passwordCtrl,
+                      nameCtrl: _nameCtrl,
+                    ),
+                    const SizedBox(height: 16),
+                    RoleSelector(
+                      selectedRole: _selectedRole,
+                      onRoleChanged: (r) {
+                        if (r != null) {
+                          setState(() {
+                            _selectedRole = r;
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    RoleSpecificFields(
+                      role: _selectedRole,
+                      specializationCtrl: _specializationCtrl,
+                      selectedPoi: _selectedPoi,
+                      onPickPoi: _pickPoi,
+                      onPickEvidence: _pickEvidence,
+                      evidencePicked: _evidenceFile != null,
+                    ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _register,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFF38B83),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'REGISTER',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    const Divider(thickness: 1, color: Colors.grey),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const LoginScreen(),
+                            ),
+                          );
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xFFF38B83)),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'LOGIN',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Color(0xFFF38B83),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              RoleSelector(
-                selectedRole: _selectedRole,
-                onRoleChanged: (r) {
-                  if (r != null) {
-                    setState(() {
-                      _selectedRole = r;
-                    });
-                  }
-                },
-              ),
-              const SizedBox(height: 16),
-              RoleSpecificFields(
-                role: _selectedRole,
-                specializationCtrl: _specializationCtrl,
-                selectedPoi: _selectedPoi,
-                onPickPoi: _pickPoi,
-                onPickEvidence: _pickEvidence,
-                evidencePicked: _evidenceFile != null,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(onPressed: _register, child: const Text('Register')),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
