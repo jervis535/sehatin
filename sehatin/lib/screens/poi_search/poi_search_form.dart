@@ -62,25 +62,138 @@ class _PoiSearchFormState extends State<PoiSearchForm> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CustomTextField(controller: _nameCtrl, label: 'Name'),
-        const SizedBox(height: 8),
-        CustomTextField(controller: _categoryCtrl, label: 'Category'),
-        const SizedBox(height: 8),
-        CustomTextField(
-          controller: _latCtrl,
-          label: 'Latitude',
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        // Name Field
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            child: TextField(
+              controller: _nameCtrl,
+              decoration: const InputDecoration(
+                labelText: 'POI Name',
+                border: InputBorder.none,
+                labelStyle: TextStyle(color: Colors.grey),
+                contentPadding: EdgeInsets.symmetric(vertical: 14),
+              ),
+            ),
+          ),
         ),
-        const SizedBox(height: 8),
-        CustomTextField(
-          controller: _lngCtrl,
-          label: 'Longitude',
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        const SizedBox(height: 12),
+
+        // Category Field
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            child: TextField(
+              controller: _categoryCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Category',
+                border: InputBorder.none,
+                labelStyle: TextStyle(color: Colors.grey),
+                contentPadding: EdgeInsets.symmetric(vertical: 14),
+              ),
+            ),
+          ),
         ),
-        const SizedBox(height: 16),
-        ElevatedButton(
+        const SizedBox(height: 12),
+
+        // Latitude Field
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            child: TextField(
+              controller: _latCtrl,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              decoration: const InputDecoration(
+                labelText: 'Latitude',
+                border: InputBorder.none,
+                labelStyle: TextStyle(color: Colors.grey),
+                contentPadding: EdgeInsets.symmetric(vertical: 14),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        // Longitude Field
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            child: TextField(
+              controller: _lngCtrl,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              decoration: const InputDecoration(
+                labelText: 'Longitude',
+                border: InputBorder.none,
+                labelStyle: TextStyle(color: Colors.grey),
+                contentPadding: EdgeInsets.symmetric(vertical: 14),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Search Button
+        ElevatedButton.icon(
           onPressed: _search,
-          child: const Text('Search'),
+          icon: const Icon(Icons.search),
+          label: const Text('Search POI'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 52, 43, 182),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            elevation: 3,
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ],
     );
