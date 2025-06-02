@@ -6,11 +6,11 @@ class UserSearchForm extends StatelessWidget {
   final VoidCallback onSearch;
 
   const UserSearchForm({
-    Key? key,
+    super.key,
     required this.controller,
     required this.loading,
     required this.onSearch,
-  }) : super(key: key);
+  });
 
   // Custom colors
   static const Color primaryColor = Color.fromARGB(255, 52, 43, 182);

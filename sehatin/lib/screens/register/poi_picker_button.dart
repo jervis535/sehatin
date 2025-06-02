@@ -4,7 +4,7 @@ import '../../models/poi_model.dart';
 class PoiPickerButton extends StatelessWidget {
   final PoiModel? selectedPoi;
   final VoidCallback onPick;
-  const PoiPickerButton({Key? key, this.selectedPoi, required this.onPick}) : super(key: key);
+  const PoiPickerButton({super.key, this.selectedPoi, required this.onPick});
 
   @override
   Widget build(BuildContext context) {

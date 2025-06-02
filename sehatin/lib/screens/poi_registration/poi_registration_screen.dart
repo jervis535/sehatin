@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'poi_form.dart';
 
 class PoiRegistrationScreen extends StatelessWidget {
-  const PoiRegistrationScreen({Key? key}) : super(key: key);
+  const PoiRegistrationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

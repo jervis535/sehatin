@@ -4,8 +4,7 @@ class EvidencePickerButton extends StatelessWidget {
   final bool picked;
   final VoidCallback onPick;
 
-  const EvidencePickerButton({Key? key, required this.picked, required this.onPick})
-      : super(key: key);
+  const EvidencePickerButton({super.key, required this.picked, required this.onPick});
 
   @override
   Widget build(BuildContext context) {
