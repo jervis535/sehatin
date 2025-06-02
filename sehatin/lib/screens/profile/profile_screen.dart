@@ -13,6 +13,9 @@ import 'role_poi_section.dart';
 import 'change_password_form.dart';
 import '../poi_search/poi_search_screen.dart';
 import '../login/login_screen.dart';
+import '../home/home_screen.dart';
+import '../channels/channels_screen.dart';
+import '../medical_record/medical_record_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final UserModel user;
@@ -34,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   DoctorModel? _doctor;
   CustomerServiceModel? _cs;
 
-  int _selectedIndex = 2; // default selected bottom nav index
+  int _selectedIndex = 2; // default selected bottom nav index (profile/riwayat)
 
   @override
   void initState() {
@@ -174,6 +177,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
           ),
+    );
+  }
+
+  void _navigateToHome() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => HomeScreen(user: widget.user, token: widget.token),
+      ),
+    );
+  }
+
+  void _navigateToChannels() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => ChannelsScreen(user: widget.user)),
+    );
+  }
+
+  void _navigateToMedicalRecord() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => MedicalRecordScreen(user: widget.user)),
     );
   }
 
@@ -351,27 +377,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _bottomNavItem('HOME', 'assets/home.png', 0),
-            _bottomNavItem('KONSULTASI ONLINE', 'assets/doctor.png', 1),
-            _bottomNavItem('RIWAYAT', 'assets/history.png', 2),
+            _bottomNavItem('HOME', 'assets/home.png', 0, _navigateToHome),
+            _bottomNavItem(
+              'KONSULTASI ONLINE',
+              'assets/doctor.png',
+              1,
+              _navigateToChannels,
+            ),
+            _bottomNavItem(
+              'RIWAYAT',
+              'assets/history.png',
+              2,
+              _navigateToMedicalRecord,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _bottomNavItem(String label, String assetPath, int index) {
+  Widget _bottomNavItem(
+    String label,
+    String assetPath,
+    int index,
+    VoidCallback onTap,
+  ) {
     final bool isSelected = _selectedIndex == index;
     final color =
         isSelected ? const Color.fromARGB(255, 0, 0, 0) : Colors.black;
 
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedIndex = index;
-          // Routing tidak diimplementasikan, ini hanya UI saja
-        });
-      },
+      onTap: onTap,
       behavior: HitTestBehavior.translucent,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
