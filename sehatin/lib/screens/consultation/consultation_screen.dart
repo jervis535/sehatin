@@ -8,7 +8,7 @@ import 'consultation_form.dart';
 
 class ConsultationScreen extends StatefulWidget {
   final UserModel user;
-  const ConsultationScreen({Key? key, required this.user}) : super(key: key);
+  const ConsultationScreen({super.key, required this.user});
 
   @override
   State<ConsultationScreen> createState() => _ConsultationScreenState();

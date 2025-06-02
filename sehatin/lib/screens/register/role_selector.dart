@@ -5,10 +5,10 @@ class RoleSelector extends StatelessWidget {
   final ValueChanged<String?> onRoleChanged;
 
   const RoleSelector({
-    Key? key,
+    super.key,
     required this.selectedRole,
     required this.onRoleChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

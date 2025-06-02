@@ -15,7 +15,7 @@ class LoginScreen extends StatelessWidget {
               clipBehavior: Clip.none,
               children: [
                 // Custom Wave Background
-                Container(
+                SizedBox(
                   height: 220,
                   width: double.infinity,
                   child: Align(

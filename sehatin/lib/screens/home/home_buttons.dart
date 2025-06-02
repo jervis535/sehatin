@@ -51,7 +51,7 @@ class RoleBasedButton extends StatelessWidget {
 }
 
 List<Widget> buildRoleBasedButtons(BuildContext context, UserModel user) {
-  final role = (user.role ?? '').trim().toLowerCase();
+  final role = (user.role).trim().toLowerCase();
 
   if (role == 'user') {
     return [

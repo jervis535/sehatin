@@ -37,7 +37,6 @@ class AuthService {
     String? specialization,
     String? poiId,
   }) async {
-    print(poiId);
     final url = Uri.parse('${dotenv.env['API_URL']}/users');
     final Map<String, dynamic> body = {
       'email': email,
@@ -53,30 +52,16 @@ class AuthService {
     } else if (role == 'customer service' && poiId != null) {
       body['poi_id'] = int.tryParse(poiId);
     }
-    print(body);
-
     final res = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(body),
     );
-    print(url);
-    print(res.body);
-
-    print(res.statusCode);
 
     if (res.statusCode == 200 || res.statusCode == 201) {
-      print("VSAHJDSDBHABDSADADA");
-      print(res.body);
       final data = jsonDecode(res.body);
-      print("raw");
-      print(data);
-      print("user");
-      print(data['user']);
       final user = UserModel.fromJson(data['user']);
       final token = data['token'];
-      print(user);
-      print(token);
 
       await SessionService.saveSession(token, user.id);
       return {

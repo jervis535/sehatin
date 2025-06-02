@@ -17,8 +17,7 @@ import '../login/login_screen.dart';
 class ProfileScreen extends StatefulWidget {
   final UserModel user;
   final String token;
-  const ProfileScreen({Key? key, required this.user, required this.token})
-    : super(key: key);
+  const ProfileScreen({super.key, required this.user, required this.token});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -26,7 +25,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _loading = true, _saving = false, _pwSaving = false;
-  String? _error;
   late TextEditingController _usernameCtrl,
       _emailCtrl,
       _telCtrl,
@@ -74,8 +72,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         }
       }
-    } catch (e) {
-      _error = e.toString();
     } finally {
       setState(() => _loading = false);
     }
@@ -91,12 +87,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _saveProfile() async {
     if (_currentPassCtrl.text.isEmpty) {
-      setState(() => _error = 'Enter current password');
       return;
     }
     setState(() {
       _saving = true;
-      _error = null;
     });
     try {
       await UserService.updateUser(
@@ -124,8 +118,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Profile updated')));
-    } catch (e) {
-      setState(() => _error = e.toString());
     } finally {
       setState(() => _saving = false);
     }
@@ -133,12 +125,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _changePassword() async {
     if (_oldPassCtrl.text.isEmpty || _newPassCtrl.text.isEmpty) {
-      setState(() => _error = 'Fill both password fields');
       return;
     }
     setState(() {
       _pwSaving = true;
-      _error = null;
     });
     try {
       await UserService.changePassword(
@@ -152,8 +142,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ).showSnackBar(const SnackBar(content: Text('Password changed')));
       _oldPassCtrl.clear();
       _newPassCtrl.clear();
-    } catch (e) {
-      setState(() => _error = e.toString());
     } finally {
       setState(() => _pwSaving = false);
     }

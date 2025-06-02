@@ -5,7 +5,7 @@ import 'poi_list_tile.dart';
 class NearbyPoiList extends StatelessWidget {
   final List<PoiModel> pois;
 
-  const NearbyPoiList({Key? key, required this.pois}) : super(key: key);
+  const NearbyPoiList({super.key, required this.pois});
 
   @override
   Widget build(BuildContext context) {

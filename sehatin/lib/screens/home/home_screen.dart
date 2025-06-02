@@ -26,7 +26,7 @@ class _HomePageState extends State<HomeScreen> {
   }
 
   Future<void> _checkVerificationStatus() async {
-    final roleLower = widget.user.role?.trim().toLowerCase() ?? '';
+    final roleLower = widget.user.role.trim().toLowerCase();
     switch (roleLower) {
       case 'doctor':
         final doctor = await DoctorService.getByUserId(widget.user.id);

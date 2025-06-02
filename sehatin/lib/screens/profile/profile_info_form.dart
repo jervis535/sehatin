@@ -15,7 +15,7 @@ class ProfileInfoForm extends StatelessWidget {
   final bool showCurrentPass;
 
   const ProfileInfoForm({
-    Key? key,
+    super.key,
     required this.usernameCtrl,
     required this.emailCtrl,
     required this.telCtrl,
@@ -25,7 +25,7 @@ class ProfileInfoForm extends StatelessWidget {
     this.showEmail = true,
     this.showTel = true,
     this.showCurrentPass = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,7 @@ import 'medical_record_item.dart';
 class MedicalRecordList extends StatelessWidget {
   final List<MedicalRecord> records;
 
-  const MedicalRecordList({Key? key, required this.records}) : super(key: key);
+  const MedicalRecordList({super.key, required this.records});
 
   @override
   Widget build(BuildContext context) {

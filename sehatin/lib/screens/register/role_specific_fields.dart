@@ -13,14 +13,14 @@ class RoleSpecificFields extends StatelessWidget {
   final bool evidencePicked;
 
   const RoleSpecificFields({
-    Key? key,
+    super.key,
     required this.role,
     required this.specializationCtrl,
     required this.selectedPoi,
     required this.onPickPoi,
     required this.onPickEvidence,
     required this.evidencePicked,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

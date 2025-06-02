@@ -5,7 +5,7 @@ import 'poi_search_form.dart';
 import 'poi_result_list.dart';
 
 class PoiSearchScreen extends StatefulWidget {
-  const PoiSearchScreen({Key? key}) : super(key: key);
+  const PoiSearchScreen({super.key});
 
   @override
   State<PoiSearchScreen> createState() => _PoiSearchScreenState();

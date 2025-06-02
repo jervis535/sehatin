@@ -70,10 +70,8 @@ class MessageService {
   Future<void> markMessageAsRead(int messageId) async {
   final url = Uri.parse('$baseUrl/messages/$messageId/read');
   final response = await http.put(url);
-  print(response);
 
   if (response.statusCode != 200) {
-    print('Error response body: ${response.body}');
     throw Exception('Failed to mark message as read');
   }
 }

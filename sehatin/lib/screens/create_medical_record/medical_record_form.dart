@@ -1,7 +1,8 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import '../../models/user_model.dart';
 import '../../services/medical_record_service.dart';
-import '../../widgets/custom_text_field.dart';
 
 class MedicalRecordForm extends StatefulWidget {
   final UserModel? selectedUser;
@@ -21,8 +22,6 @@ class _MedicalRecordFormState extends State<MedicalRecordForm> {
 
   // Custom colors
   static const Color primaryColor = Color.fromARGB(255, 52, 43, 182);
-  static const Color backgroundColor = Colors.white;
-  static const Color textColor = Colors.white;
 
   @override
   void dispose() {

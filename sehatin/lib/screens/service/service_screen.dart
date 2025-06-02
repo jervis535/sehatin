@@ -10,7 +10,7 @@ import 'error_message.dart';
 
 class ServiceScreen extends StatefulWidget {
   final UserModel user;
-  const ServiceScreen({Key? key, required this.user}) : super(key: key);
+  const ServiceScreen({super.key, required this.user});
 
   @override
   State<ServiceScreen> createState() => _ServiceScreenState();

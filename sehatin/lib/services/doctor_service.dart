@@ -40,9 +40,6 @@ static Future<DoctorModel?> updateDoctor({
   required String token,
 }) async {
   final uri = Uri.parse('$_baseUrl/doctors/$userId');
-  print(uri);
-  print(specialization);
-  print(poiId);
   final res = await http.put(
     uri,
     headers: {

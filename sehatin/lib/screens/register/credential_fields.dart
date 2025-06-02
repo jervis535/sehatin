@@ -4,11 +4,11 @@ import '../../widgets/custom_text_field.dart';
 class CredentialFields extends StatelessWidget {
   final TextEditingController emailCtrl, passwordCtrl, nameCtrl;
   const CredentialFields({
-    Key? key,
+    super.key,
     required this.emailCtrl,
     required this.passwordCtrl,
     required this.nameCtrl,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

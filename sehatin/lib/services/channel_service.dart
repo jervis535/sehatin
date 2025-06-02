@@ -14,13 +14,11 @@ class ChannelService {
 
   static Future<int?> createConsultationChannel(int user0, int user1) async {
     final uri = Uri.parse('$_baseUrl/channels');
-    print(uri);
     final body = {
       'user_id0': user0,
       'user_id1': user1,
       'type': 'consultation',
     };
-    print(body);
 
 
     final res = await http.post(
@@ -100,8 +98,6 @@ static Future<List<ChannelModel>> getUserChannels(int userId, {String? type}) as
         'type': 'service',
       }),
     );
-    print(uri);
-    print(res.body);
     if (res.statusCode == 201) {
       return (jsonDecode(res.body) as Map<String, dynamic>)['id'] as int;
     }

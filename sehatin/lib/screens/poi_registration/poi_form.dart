@@ -3,7 +3,7 @@ import '../../services/poi_service.dart';
 import 'submit_button.dart';
 
 class PoiForm extends StatefulWidget {
-  const PoiForm({Key? key}) : super(key: key);
+  const PoiForm({super.key});
 
   @override
   State<PoiForm> createState() => _PoiFormState();
