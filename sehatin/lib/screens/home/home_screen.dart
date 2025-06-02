@@ -4,6 +4,8 @@ import '../../models/user_model.dart';
 import '../../services/doctor_service.dart';
 import '../home/home_buttons.dart';
 import '../profile/profile_screen.dart';
+import '../channels/channels_screen.dart';
+import '../medical_record/medical_record_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final UserModel user;
@@ -42,6 +44,25 @@ class _HomePageState extends State<HomeScreen> {
         isVerified = true;
     }
     setState(() => loading = false);
+  }
+
+  void _navigateToChannels() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => ChannelsScreen(user: widget.user)),
+    );
+  }
+
+  void _navigateToMedicalRecord() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => MedicalRecordScreen(user: widget.user)),
+    );
+  }
+
+  void _navigateToHome() {
+    // Already on home screen, you can add refresh functionality or just do nothing
+    // Or you could scroll to top if needed
   }
 
   @override
@@ -159,13 +180,19 @@ class _HomePageState extends State<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _bottomNavItem(Icons.home, 'HOME'),
+                  _bottomNavItem(Icons.home, 'HOME', _navigateToHome),
                   _bottomNavItemImage(
                     'assets/doctor.png',
                     'KONSULTASI ONLINE',
                     40,
+                    _navigateToChannels,
                   ),
-                  _bottomNavItemImage('assets/history.png', 'RIWAYAT', 28),
+                  _bottomNavItemImage(
+                    'assets/history.png',
+                    'RIWAYAT',
+                    28,
+                    _navigateToMedicalRecord,
+                  ),
                 ],
               ),
             ),
@@ -175,39 +202,50 @@ class _HomePageState extends State<HomeScreen> {
     );
   }
 
-  Widget _bottomNavItem(IconData icon, String label) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, color: Colors.black),
-        const SizedBox(height: 4),
-        Text(
-          label.toUpperCase(),
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-            color: Colors.black,
+  Widget _bottomNavItem(IconData icon, String label, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: Colors.black),
+          const SizedBox(height: 4),
+          Text(
+            label.toUpperCase(),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              color: Colors.black,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _bottomNavItemImage(String assetPath, String label, double size) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image.asset(assetPath, width: size, height: size),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-            color: Colors.black,
+  Widget _bottomNavItemImage(
+    String assetPath,
+    String label,
+    double size,
+    VoidCallback onTap,
+  ) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(assetPath, width: size, height: size),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              color: Colors.black,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
