@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../models/user_model.dart';
 import '../../models/poi_model.dart';
 import '../../services/customer_service_service.dart';
@@ -28,6 +29,38 @@ class _ServiceScreenState extends State<ServiceScreen> {
     _checkUserLock();
   }
 
+  Future<List<double>> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    // Check location permission
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    // Get the current position
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    // Return latitude and longitude as a list of doubles
+    return [position.latitude, position.longitude];
+  }
+
   Future<void> _checkUserLock() async {
     final existing = await ChannelService.getUserServiceChannels(
       widget.user.id,
@@ -40,20 +73,17 @@ class _ServiceScreenState extends State<ServiceScreen> {
   }
 
   Future<void> _pickPoiAndConnect() async {
-    final lat = double.tryParse(_latCtrl.text.trim());
-    final lng = double.tryParse(_lngCtrl.text.trim());
-
-    if (lat == null || lng == null) {
-      setState(() => _error = 'Enter valid latitude & longitude');
-      return;
-    }
-
+    try {
+    List <double> pos = await _getCurrentLocation();
+    print(pos[0]);
+    print(pos[1]);
     final poi = await Navigator.push<PoiModel?>(
       context,
       MaterialPageRoute(
-        builder: (_) => NearbyPoiScreen(latitude: lat, longitude: lng),
+        builder: (_) => NearbyPoiScreen(latitude: pos[0], longitude: pos[1]),
       ),
     );
+    
     if (poi == null) return;
 
     setState(() {
@@ -61,7 +91,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
       _error = null;
     });
 
-    try {
       final agents = await CustomerServiceService.getByPoiId(poi.id);
       if (agents.isEmpty) {
         _setError('No service agents at "${poi.name}"');
@@ -136,7 +165,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            CoordinateInputFields(latCtrl: _latCtrl, lngCtrl: _lngCtrl),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loading ? null : _pickPoiAndConnect,
