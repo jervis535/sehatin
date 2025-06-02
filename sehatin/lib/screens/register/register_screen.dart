@@ -1,237 +1,155 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import '../login/login_screen.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../../models/poi_model.dart';
+import '../../services/auth_service.dart';
+import '../../services/evidence_service.dart';
+import '../home/home_screen.dart';
+import '../poi_search/poi_search_screen.dart';
+import 'credential_fields.dart';
+import 'role_selector.dart';
+import 'role_specific_fields.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
-
+  const RegisterScreen({Key? key}) : super(key: key);
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _emailController = TextEditingController();
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _rePasswordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  String _selectedRole = 'user';
+  PoiModel? _selectedPoi;
+  File? _evidenceFile;
+  String? _evidenceBase64;
 
-  bool _obscurePassword = true;
-  bool _obscureRePassword = true;
+  // Controllers forwarded to CredentialFields
+  final _emailCtrl = TextEditingController();
+  final _passwordCtrl = TextEditingController();
+  final _nameCtrl = TextEditingController();
+  final _specializationCtrl = TextEditingController();
 
-  String _error = '';
+  @override
+  void dispose() {
+    _emailCtrl.dispose();
+    _passwordCtrl.dispose();
+    _nameCtrl.dispose();
+    _specializationCtrl.dispose();
+    super.dispose();
+  }
 
-  void _register() {
-    setState(() => _error = '');
+  Future<void> _pickPoi() async {
+    final poi = await Navigator.push<PoiModel?>(
+      context,
+      MaterialPageRoute(builder: (_) => const PoiSearchScreen()),
+    );
+    if (poi != null) setState(() => _selectedPoi = poi);
+  }
 
-    if (_emailController.text.isEmpty ||
-        _firstNameController.text.isEmpty ||
-        _lastNameController.text.isEmpty ||
-        _passwordController.text.isEmpty ||
-        _rePasswordController.text.isEmpty) {
-      setState(() => _error = 'All fields are required');
+  Future<void> _pickEvidence() async {
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1200,
+      maxHeight: 1200,
+      imageQuality: 80,
+    );
+    if (picked != null) {
+      final bytes = await picked.readAsBytes();
+      setState(() {
+        _evidenceFile = File(picked.path);
+        _evidenceBase64 = base64Encode(bytes);
+      });
+    }
+  }
+
+  Future<void> _register() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    // validate role‐fields
+    if ((_selectedRole == 'doctor' && (_specializationCtrl.text.isEmpty || _selectedPoi == null)) ||
+        (_selectedRole == 'customer service' && _selectedPoi == null)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all required fields')),
+      );
+      return;
+    }
+    if ((_selectedRole != 'user') && _evidenceBase64 == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please upload evidence image')),
+      );
       return;
     }
 
-    if (_passwordController.text != _rePasswordController.text) {
-      setState(() => _error = 'Passwords do not match');
-      return;
+    try {
+      final resp = await AuthService.register(
+        email: _emailCtrl.text.trim(),
+        password: _passwordCtrl.text.trim(),
+        name: _nameCtrl.text.trim(),
+        role: _selectedRole,
+        specialization: _selectedRole == 'doctor' ? _specializationCtrl.text.trim() : null,
+        poiId: _selectedPoi?.id.toString(),
+      );
+      final user = resp['user'], token = resp['token'];
+
+      if (_selectedRole != 'user' && _evidenceBase64 != null) {
+        await EvidenceService.uploadEvidence(
+          userId: user.id,
+          base64Image: _evidenceBase64!,
+        );
+      }
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => HomeScreen(user: user, token: token)),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Registration successful!')));
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
-    );
-  }
-
-  void _goToLogin() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
-    );
-  }
-
-  InputDecoration _inputDecoration(String hint, {Widget? suffixIcon}) {
-    return InputDecoration(
-      hintText: hint,
-      filled: true,
-      fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-      suffixIcon: suffixIcon,
-    );
-  }
-
-  ButtonStyle _buttonStyle() {
-    return ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFFFF6B6B),
-      padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFCEEEE),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  height: 220,
-                  width: double.infinity,
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Image.asset(
-                      'assets/wave.png',
-                      fit: BoxFit.cover,
-                      height: 220,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 120,
-                  left: 0,
-                  right: 0,
-                  child: CircleAvatar(
-                    radius: 80,
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.person, size: 80, color: Colors.grey),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 100),
-
-            const Text(
-              'SIGN UP',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF4A4A4A),
+      appBar: AppBar(title: const Text('Register')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              CredentialFields(
+                emailCtrl: _emailCtrl,
+                passwordCtrl: _passwordCtrl,
+                nameCtrl: _nameCtrl,
               ),
-            ),
-
-            const SizedBox(height: 24),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _emailController,
-                    decoration: _inputDecoration('Enter Email'),
-                  ),
-                  const SizedBox(height: 16),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _firstNameController,
-                          decoration: _inputDecoration('Enter First Name'),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: TextField(
-                          controller: _lastNameController,
-                          decoration: _inputDecoration('Enter Last Name'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    decoration: _inputDecoration(
-                      'Enter Password',
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Colors.grey,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  TextField(
-                    controller: _rePasswordController,
-                    obscureText: _obscureRePassword,
-                    decoration: _inputDecoration(
-                      'Re-Enter Password',
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureRePassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Colors.grey,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscureRePassword = !_obscureRePassword;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-
-                  if (_error.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Text(_error, style: const TextStyle(color: Colors.red)),
-                  ],
-
-                  const SizedBox(height: 24),
-
-                  ElevatedButton(
-                    onPressed: _register,
-                    style: _buttonStyle(),
-                    child: const Text(
-                      'SAVE',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  const Divider(
-                    thickness: 1,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
-                  const SizedBox(height: 16),
-
-                  ElevatedButton(
-                    onPressed: _goToLogin,
-                    style: _buttonStyle(),
-                    child: const Text(
-                      'LOGIN',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-                ],
+              const SizedBox(height: 16),
+              RoleSelector(
+                selectedRole: _selectedRole,
+                onRoleChanged: (r) {
+                  if (r != null) {
+                    setState(() {
+                      _selectedRole = r;
+                    });
+                  }
+                },
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+              RoleSpecificFields(
+                role: _selectedRole,
+                specializationCtrl: _specializationCtrl,
+                selectedPoi: _selectedPoi,
+                onPickPoi: _pickPoi,
+                onPickEvidence: _pickEvidence,
+                evidencePicked: _evidenceFile != null,
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(onPressed: _register, child: const Text('Register')),
+            ],
+          ),
         ),
       ),
     );
