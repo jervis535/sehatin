@@ -8,6 +8,7 @@ import '../../services/doctor_service.dart';
 import '../../services/customer_service_service.dart';
 import '../../services/poi_service.dart';
 import '../../services/session_service.dart';
+import '../../widgets/custom_bottom_nav.dart';
 import 'profile_info_form.dart';
 import 'role_poi_section.dart';
 import 'change_password_form.dart';
@@ -36,8 +37,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   PoiModel? _selectedPoi;
   DoctorModel? _doctor;
   CustomerServiceModel? _cs;
-
-  int _selectedIndex = 2; // default selected bottom nav index (profile/riwayat)
 
   @override
   void initState() {
@@ -89,6 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _saveProfile() async {
+    print(_usernameCtrl.text.trim());
     if (_currentPassCtrl.text.isEmpty) {
       return;
     }
@@ -315,15 +315,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         _buildDivider(),
                         _buildMenuItem(
                           context,
-                          icon: Icons.privacy_tip,
-                          label: 'Keamanan dan Privasi',
-                          onTap: () {
-                            // TODO: Implement navigasi ke halaman keamanan dan privasi
-                          },
-                        ),
-                        _buildDivider(),
-                        _buildMenuItem(
-                          context,
                           icon: Icons.logout,
                           label: 'Keluar',
                           onTap: _logout,
@@ -337,6 +328,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
+          CustomBottomNav(user: widget.user, token: widget.token),
 
           // Avatar posisi di atas konten, tengah layar horizontal
           Positioned(
@@ -367,63 +359,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Icon(Icons.arrow_back, color: Colors.white, size: 30),
                 ),
               ),
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: Container(
-        height: 80,
-        color: Colors.white,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _bottomNavItem('HOME', 'assets/home.png', 0, _navigateToHome),
-            _bottomNavItem(
-              'KONSULTASI ONLINE',
-              'assets/doctor.png',
-              1,
-              _navigateToChannels,
-            ),
-            _bottomNavItem(
-              'RIWAYAT',
-              'assets/history.png',
-              2,
-              _navigateToMedicalRecord,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _bottomNavItem(
-    String label,
-    String assetPath,
-    int index,
-    VoidCallback onTap,
-  ) {
-    final bool isSelected = _selectedIndex == index;
-    final color =
-        isSelected ? const Color.fromARGB(255, 0, 0, 0) : Colors.black;
-
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.translucent,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            assetPath,
-            width: index == 1 ? 40 : 28,
-            height: index == 1 ? 40 : 28,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label.toUpperCase(),
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              color: color,
             ),
           ),
         ],

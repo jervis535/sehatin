@@ -4,8 +4,7 @@ import '../../models/user_model.dart';
 import '../../services/doctor_service.dart';
 import '../home/home_buttons.dart';
 import '../profile/profile_screen.dart';
-import '../channels/channels_screen.dart';
-import '../medical_record/medical_record_screen.dart';
+import '../../widgets/custom_bottom_nav.dart';
 
 class HomeScreen extends StatefulWidget {
   final UserModel user;
@@ -171,79 +170,7 @@ class _HomePageState extends State<HomeScreen> {
               ),
             ),
           ),
-
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              height: 80,
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _bottomNavItem(Icons.home, 'HOME', _navigateToHome),
-                  _bottomNavItemImage(
-                    'assets/doctor.png',
-                    'KONSULTASI ONLINE',
-                    40,
-                    _navigateToChannels,
-                  ),
-                  _bottomNavItemImage(
-                    'assets/history.png',
-                    'RIWAYAT',
-                    28,
-                    _navigateToMedicalRecord,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _bottomNavItem(IconData icon, String label, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: Colors.black),
-          const SizedBox(height: 4),
-          Text(
-            label.toUpperCase(),
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              color: Colors.black,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _bottomNavItemImage(
-    String assetPath,
-    String label,
-    double size,
-    VoidCallback onTap,
-  ) {
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(assetPath, width: size, height: size),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              color: Colors.black,
-            ),
-          ),
+          CustomBottomNav(user: widget.user, token: widget.token, selectedIndex: 0)
         ],
       ),
     );

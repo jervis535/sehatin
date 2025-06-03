@@ -6,10 +6,41 @@ import 'package:sehatin/screens/login/login_screen.dart';
 import 'package:sehatin/screens/home/home_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
+
+import 'dart:convert';
+
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  // Handle background notification
+  print("Handling a background message: ${message.messageId}");
+}
+
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   dotenv.load(fileName: ".env");
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await _initNotifications();
   runApp(const MyApp());
+}
+
+Future<void> _initNotifications() async {
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 }
 
 class MyApp extends StatelessWidget {
@@ -42,6 +73,65 @@ class RootDecider extends StatelessWidget {
         final userJson =
             await AuthService.fetchUserWithToken(userId, token);
         final user = UserModel.fromJson(userJson);
+
+        // ─── NEW: initialize FCM and request permission
+        FirebaseMessaging messaging = FirebaseMessaging.instance;
+        await messaging.requestPermission(); // iOS
+
+        // ─── NEW: get the FCM token
+        String? fcmToken = await messaging.getToken();
+        print("🔑 Obtained FCM token: $fcmToken");
+
+        if (fcmToken != null) {
+          // ─── NEW: send it to your backend
+          final url = Uri.parse('${dotenv.env['API_URL']}/register-token');
+          final response = await http.post(
+            url,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'user_id': userId,
+              'token': fcmToken,
+              'platform': 'flutter', // or detect 'android' / 'ios' if you like
+            }),
+          );
+          if (response.statusCode == 200) {
+            print('✅ FCM token registered on backend');
+          } else {
+            print('❌ Failed to register FCM token: ${response.body}');
+          }
+        }
+
+        // ─── NEW: set up foreground notification handling
+        FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+          final notification = message.notification;
+          final android = message.notification?.android;
+          if (notification != null && android != null) {
+            FlutterLocalNotificationsPlugin()
+                .show(
+                  notification.hashCode,
+                  notification.title,
+                  notification.body,
+                  NotificationDetails(
+                    android: AndroidNotificationDetails(
+                      'chat_messages',       // channelId
+                      'Chat Messages',       // channelName
+                      importance: Importance.max,
+                      priority: Priority.high,
+                    ),
+                  ),
+                  payload: jsonEncode(message.data),
+                )
+                .then((_) => print("🔔 Displayed a foreground notification"));
+          }
+        });
+
+        // ─── NEW: optional: handle taps when app is opened/resumed
+        FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+          print("🚀 onMessageOpenedApp data: ${message.data}");
+          // e.g. navigate to the specific chat screen using message.data['channel_id']
+        });
+
+        // ─── Return your HomeScreen only after we have registered the token
         return HomeScreen(user: user, token: token);
       } catch (_) {
         await SessionService.clearSession();
@@ -49,6 +139,7 @@ class RootDecider extends StatelessWidget {
     }
     return const LoginScreen();
   }
+
 
   @override
   Widget build(BuildContext context) {
