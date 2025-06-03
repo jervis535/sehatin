@@ -2,6 +2,7 @@ import express from 'express';
 import http from 'http';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import './utils/firebase.js';
 
 import usersRoute from './routes/UserRoutes.js';
 import poisRoute from './routes/POIRoutes.js';
@@ -11,7 +12,9 @@ import channelsRoute from './routes/ChannelRoutes.js';
 import medicalHistoryRoute from "./routes/MedicalRecordRoutes.js";
 import messageRoute from "./routes/MessagesRoutes.js";
 import evidenceRoute from "./routes/EvidenceRoutes.js";
+import tokenRoutes from './routes/TokenRoute.js';
 import fileUpload from 'express-fileupload';
+
 
 import { setupWebSocket } from './websocket.js';
 
@@ -28,6 +31,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use(usersRoute);
 app.use(poisRoute);
+app.use(tokenRoutes);
 app.use(customerServiceRoute);
 app.use(doctorsRoute);
 app.use(channelsRoute);

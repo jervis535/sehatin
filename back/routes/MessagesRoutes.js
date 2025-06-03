@@ -1,5 +1,6 @@
-// routes/MessagesRoutes.js
 import express from 'express';
+import { getMessaging } from 'firebase-admin/messaging';
+import '../utils/firebase.js';
 import pool from '../utils/dblogin.js';
 import sharp from 'sharp';
 import { broadcastMessageToChannel,broadcastMessageReadToChannel } from '../websocket.js';
@@ -21,38 +22,87 @@ router.post('/messages', async (req, res) => {
         .resize({ width: 800 })
         .jpeg({ quality: 70 })
         .toBuffer();
-
-      imageBase64 = imageBuffer.toString('base64'); // Convert back to base64
+      imageBase64 = imageBuffer.toString('base64');
     }
 
+    // 1) Insert message into DB
     const result = await pool.query(
       `INSERT INTO messages (channel_id, user_id, content, type, image)
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING *`,
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *`,
       [channel_id, user_id, content, type, imageBuffer]
     );
-
     const insertedMessage = result.rows[0];
-    // Attach base64 image string (if present) to the response
+
+    // Attach base64 image string (if present)
     if (imageBase64) {
       insertedMessage.image = imageBase64;
     }
 
-  const channelRes = await pool.query(
-    'SELECT user_id0, user_id1 FROM channels WHERE id = $1',
-    [channel_id]
-  );
+    // 2) Find both participants in the channel
+    const channelRes = await pool.query(
+      'SELECT user_id0, user_id1 FROM channels WHERE id = $1',
+      [channel_id]
+    );
 
-  if (channelRes.rows.length > 0) {
-    const { user_id0, user_id1 } = channelRes.rows[0];
+    if (channelRes.rows.length > 0) {
+      const { user_id0, user_id1 } = channelRes.rows[0];
+      insertedMessage.channelParticipants = {
+        userId0: user_id0,
+        userId1: user_id1,
+      };
 
-    insertedMessage.channelParticipants = {
-      userId0: user_id0,
-      userId1: user_id1,
-    };
+      // 3) Broadcast real-time message via WebSocket
+      broadcastMessageToChannel(channel_id, insertedMessage);
 
-    broadcastMessageToChannel(channel_id, insertedMessage);
-  }
+      // 4) Determine recipient user
+      const recipientId = (user_id0 === user_id) ? user_id1 : user_id0;
+
+      // 5) Fetch recipient's FCM tokens
+      const tokensResult = await pool.query(
+        'SELECT device_token FROM user_tokens WHERE user_id = $1',
+        [recipientId]
+      );
+      const tokens = tokensResult.rows.map(r => r.device_token).filter(t => !!t);
+
+      if (tokens.length > 0) {
+        // 6) Build FCM payload
+        const messaging = getMessaging(); // ✅ Use getMessaging
+        const response = await messaging.sendEachForMulticast({
+          tokens,
+          notification: {
+            title: 'New message',
+            body: content || '[Image]',
+          },
+          data: {
+            channel_id: channel_id.toString(),
+            sender_id: user_id.toString(),
+            message_id: insertedMessage.id.toString(),
+            type: type || '',
+          },
+        });
+
+        console.log(`✅ FCM sendEachForMulticast success: ${response.successCount}, failure: ${response.failureCount}`);
+
+        // 7) Clean up invalid tokens
+        response.responses.forEach((r, idx) => {
+          if (!r.success && r.error) {
+            console.error(`FCM error for token ${tokens[idx]}:`, r.error);
+            if (
+              r.error.code === 'messaging/registration-token-not-registered' ||
+              r.error.code === 'messaging/invalid-argument'
+            ) {
+              pool.query('DELETE FROM user_tokens WHERE device_token = $1', [tokens[idx]])
+                .then(() => console.log(`Removed invalid token ${tokens[idx]}`))
+                .catch(e => console.error('Error removing token:', e));
+            }
+          }
+        });
+      } else {
+        console.log('ℹ️ No FCM tokens found for user', recipientId);
+      }
+    }
+
     res.status(201).json(insertedMessage);
   } catch (err) {
     console.error('Error inserting message:', err);

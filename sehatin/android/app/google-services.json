@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "968502648962",
+    "project_id": "sehatin-a7972",
+    "storage_bucket": "sehatin-a7972.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:968502648962:android:52814b1ad2b622cbfc149b",
+        "android_client_info": {
+          "package_name": "com.example.sehatin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjK4nxMgFHTwrFwiqGQzkJX_iGoAkjShI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

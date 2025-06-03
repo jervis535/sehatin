@@ -111,17 +111,7 @@ List<Widget> buildRoleBasedButtons(BuildContext context, UserModel user) {
             MaterialPageRoute(builder: (_) => ChannelsScreen(user: user)),
           );
         },
-      ),
-      RoleBasedButton(
-        label: 'Medical History',
-        iconWidget: const Icon(Icons.history, size: 30, color: Colors.grey),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => MedicalRecordScreen(user: user)),
-          );
-        },
-      ),
+      )
     ];
   } else if (role == 'customer service') {
     return [

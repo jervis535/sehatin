@@ -54,6 +54,7 @@ const createTables = async () => {
             user_id0 INT NOT NULL,
             user_id1 INT NOT NULL,
             type VARCHAR(50) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id0) REFERENCES users(id) ON DELETE CASCADE,
             FOREIGN KEY (user_id1) REFERENCES users(id) ON DELETE CASCADE
             );
@@ -93,9 +94,15 @@ const createTables = async () => {
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
             );
         `);
-        
-        
-
+        await pool.query(`
+            CREATE TABLE user_tokens (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            device_token TEXT UNIQUE,
+            platform TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
         
         console.log('Finished migrating tables');
     } catch (error) {

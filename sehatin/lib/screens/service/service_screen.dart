@@ -6,7 +6,6 @@ import '../../services/customer_service_service.dart';
 import '../../services/channel_service.dart';
 import '../chat/chat_screen.dart';
 import '../nearby_poi/nearby_poi_screen.dart';
-import 'coordinate_input_fields.dart';
 import 'error_message.dart';
 
 class ServiceScreen extends StatefulWidget {

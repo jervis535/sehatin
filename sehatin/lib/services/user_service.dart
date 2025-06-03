@@ -75,8 +75,9 @@ class UserService {
     }
     final data = jsonDecode(res.body) as List;
     var users = data
-        .map((e) => UserModel.fromJson(e as Map<String, dynamic>))
-        .toList();
+      .map((e) => UserModel.fromJson(e as Map<String, dynamic>))
+      .where((u) => u.role.toLowerCase() == 'user')
+      .toList();
     if (query != null && query.isNotEmpty) {
       final q = query.toLowerCase();
       users = users.where((u) {

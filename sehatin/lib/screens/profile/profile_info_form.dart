@@ -32,22 +32,9 @@ class ProfileInfoForm extends StatelessWidget {
     return Column(
       children: [
         CustomTextField(controller: usernameCtrl, label: 'Username'),
-        if (showEmail) ...[
-          const SizedBox(height: 8),
-          CustomTextField(controller: emailCtrl, label: 'Email'),
-        ],
-        if (showTel) ...[
-          const SizedBox(height: 8),
-          CustomTextField(controller: telCtrl, label: 'Telephone'),
-        ],
-        if (showCurrentPass) ...[
-          const SizedBox(height: 8),
-          CustomTextField(
-            controller: currentPassCtrl,
-            label: 'Current Password',
-            isPassword: true,
-          ),
-        ],
+        CustomTextField(controller: emailCtrl, label: 'Email'),
+        CustomTextField(controller: telCtrl, label: 'Telephone'),
+        CustomTextField(controller: currentPassCtrl,label: 'Current Password',isPassword: true,),
         const SizedBox(height: 16),
         ElevatedButton(
           onPressed: onSave,
