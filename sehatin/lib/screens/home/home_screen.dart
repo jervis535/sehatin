@@ -6,7 +6,6 @@ import '../home/home_buttons.dart';
 import '../profile/profile_screen.dart';
 import '../../widgets/custom_bottom_nav.dart';
 
-
 class HomeScreen extends StatefulWidget {
   final UserModel user;
   final String token;
@@ -44,6 +43,25 @@ class _HomePageState extends State<HomeScreen> {
         isVerified = true;
     }
     setState(() => loading = false);
+  }
+
+  void _navigateToChannels() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => ChannelsScreen(user: widget.user)),
+    );
+  }
+
+  void _navigateToMedicalRecord() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => MedicalRecordScreen(user: widget.user)),
+    );
+  }
+
+  void _navigateToHome() {
+    // Already on home screen, you can add refresh functionality or just do nothing
+    // Or you could scroll to top if needed
   }
 
   @override

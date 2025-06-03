@@ -14,6 +14,9 @@ import 'role_poi_section.dart';
 import 'change_password_form.dart';
 import '../poi_search/poi_search_screen.dart';
 import '../login/login_screen.dart';
+import '../home/home_screen.dart';
+import '../channels/channels_screen.dart';
+import '../medical_record/medical_record_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final UserModel user;
@@ -34,7 +37,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   PoiModel? _selectedPoi;
   DoctorModel? _doctor;
   CustomerServiceModel? _cs;
-
 
   @override
   void initState() {
@@ -175,6 +177,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ],
           ),
+    );
+  }
+
+  void _navigateToHome() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => HomeScreen(user: widget.user, token: widget.token),
+      ),
+    );
+  }
+
+  void _navigateToChannels() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => ChannelsScreen(user: widget.user)),
+    );
+  }
+
+  void _navigateToMedicalRecord() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => MedicalRecordScreen(user: widget.user)),
     );
   }
 

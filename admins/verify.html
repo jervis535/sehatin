@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Data Graph Visualization</title>
+  <title>Admin Verification Panel - Verify</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
@@ -15,12 +15,28 @@
   </nav>
 
   <main class="main-content">
-    <h2 class="panel-title">Data Graph Visualization</h2>
-    <div class="card">
-      <canvas id="dataChart"></canvas>
+    <div class="header-brand">
+      <img src="logo_sehatin.jpg" alt="Sehatin Logo" class="logo" />
+      <h1 class="brand">Sehatin</h1>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <h2 class="panel-title">Admin Verification Panel</h2>
+
+    <div class="card">
+      <h3>POIs to Verify</h3>
+      <ul id="poi-list"></ul>
+    </div>
+
+    <div class="card">
+      <h3>Doctors to Verify</h3>
+      <ul id="doctor-list"></ul>
+    </div>
+
+    <div class="card">
+      <h3>Customer Services to Verify</h3>
+      <ul id="customer-service-list"></ul>
+    </div>
+
     <script src="script.js"></script>
   </main>
 </body>
