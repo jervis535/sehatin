@@ -23,8 +23,10 @@ router.post('/channels', async (req, res) => {
 
 // Get all channels
 router.get('/channels', async (req, res) => {
+  console.log(req.query.archived);
   const userId = parseInt(req.query.user_id, 10); // Get user_id from query string
   const channelType = req.query.type; // Get type from query string
+  const archivedQuery = req.query.archived; // Get archived from query string
 
   try {
     let result;
@@ -33,14 +35,23 @@ router.get('/channels', async (req, res) => {
     const values = [];
 
     if (!isNaN(userId)) {
-      conditions.push('(user_id0 = $1 OR user_id1 = $1)');
+      conditions.push(`(user_id0 = $${values.length + 1} OR user_id1 = $${values.length + 1})`);
       values.push(userId);
     }
 
     if (channelType) {
-      const index = values.length + 1;
-      conditions.push(`type = $${index}`);
+      conditions.push(`type = $${values.length + 1}`);
       values.push(channelType);
+    }
+
+    // Handle archived filtering
+    if (archivedQuery === 'true') {
+      conditions.push(`archived = $${values.length + 1}`);
+      values.push(true);
+    } else {
+      // Default to archived = false
+      conditions.push(`archived = $${values.length + 1}`);
+      values.push(false);
     }
 
     if (conditions.length > 0) {
@@ -59,50 +70,67 @@ router.get('/channels', async (req, res) => {
   }
 });
 
-
-// delete channel
+// delete or archive channel
 router.delete('/channels/:id', async (req, res) => {
   const channelId = parseInt(req.params.id, 10);
-  console.log(`[HTTP] DELETE /channels/${channelId} received`);  // ← new
+  console.log(`[HTTP] DELETE /channels/${channelId} received`);
 
   try {
-    // 1) Fetch participants
+    // 1) Fetch channel including archived status and participants
     const chanRes = await pool.query(
-      'SELECT user_id0, user_id1 FROM channels WHERE id = $1',
+      'SELECT user_id0, user_id1, archived FROM channels WHERE id = $1',
       [channelId]
     );
-    console.log(`[HTTP] fetched participants:`, chanRes.rows);    // ← new
+    console.log(`[HTTP] fetched channel:`, chanRes.rows);
 
     if (chanRes.rows.length === 0) {
-      console.log(`[HTTP] channel ${channelId} not found`);      // ← new
+      console.log(`[HTTP] channel ${channelId} not found`);
       return res.status(404).json({ error: 'Channel not found' });
     }
-    const participants = chanRes.rows[0];
 
-    // 2) Delete channel
-    const delRes = await pool.query(
-      'DELETE FROM channels WHERE id = $1 RETURNING *',
-      [channelId]
-    );
-    console.log(`[HTTP] deleted channel row:`, delRes.rows[0]);  // ← new
+    const channel = chanRes.rows[0];
+    const shouldDelete = channel.archived === true;
 
-    // 3) Broadcast deletion
+    let result;
+
+    if (shouldDelete) {
+      // 2a) Physically delete the channel
+      result = await pool.query(
+        'DELETE FROM channels WHERE id = $1 RETURNING *',
+        [channelId]
+      );
+      console.log(`[HTTP] deleted channel row:`, result.rows[0]);
+    } else {
+      // 2b) Archive the channel
+      result = await pool.query(
+        'UPDATE channels SET archived = true WHERE id = $1 RETURNING *',
+        [channelId]
+      );
+      console.log(`[HTTP] archived channel row:`, result.rows[0]);
+    }
+
+    // 3) Broadcast deletion/archive
     console.log(
       `[WS] broadcasting channel_deleted to users`,
-      participants.user_id0, participants.user_id1
-    );                                                          // ← new
+      channel.user_id0, channel.user_id1
+    );
     broadcastChannelDeleted(channelId, {
-      userId0: participants.user_id0,
-      userId1: participants.user_id1,
+      userId0: channel.user_id0,
+      userId1: channel.user_id1,
     });
 
     // 4) HTTP response
-    res.json({ message: 'Channel deleted', channel: delRes.rows[0] });
+    res.json({
+      message: shouldDelete ? 'Channel deleted' : 'Channel archived',
+      channel: result.rows[0],
+    });
   } catch (err) {
-    console.error('[HTTP] Error deleting channel:', err);       // ← new
+    console.error('[HTTP] Error deleting/archiving channel:', err);
     res.status(500).json({ error: err.message });
   }
 });
+
+
 
 // Get channel by ID
 router.get('/channels/:id', async (req, res) => {

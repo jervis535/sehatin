@@ -10,8 +10,8 @@ const router = express.Router();
 
 // Create a new message
 router.post('/messages', async (req, res) => {
-  console.log("testing");
   const { channel_id, user_id, content, type, image } = req.body;
+  console.log(channel_id,user_id,content,type,image);
   let imageBuffer = null;
   let imageBase64 = null;
 
