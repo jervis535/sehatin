@@ -1,6 +1,8 @@
 import { faker } from '@faker-js/faker';
 import bcrypt from 'bcrypt';
 import pool from './dblogin.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const NUM_USERS = 10;
 const NUM_POIS = 5;
@@ -49,7 +51,7 @@ async function generateData() {
       const email = faker.internet.email();
       const telno = 'd+'+i.toString();
       const role = 'doctor';
-      const poi_id = faker.helpers.arrayElement(poiIds);
+      const poi_id = 1;
       const specialization="heart";
 
       const result = await pool.query(
@@ -70,7 +72,7 @@ async function generateData() {
       const email = faker.internet.email();
       const telno = 'c+'+i.toString();
       const role = 'customer service'
-      const poi_id = faker.helpers.arrayElement(poiIds);
+      const poi_id = 1;
 
       const result = await pool.query(
         `INSERT INTO users (username, email, password, telno, role)
@@ -82,7 +84,39 @@ async function generateData() {
         VALUES ($1,$2)`,
         [result.rows[0].id, poi_id]
       )
+    }     
+    const reviewerId=1;
+    const revieweeId=11;
+
+    //channels
+    for (let i = 0; i < 5; i++) {
+      
+      await pool.query(
+        `INSERT INTO channels (user_id0, user_id1, type)
+        VALUES ($1, $2, $3)`,
+        [reviewerId, revieweeId, "test"]
+      );
     }
+
+    //reviews
+    for (let i=0;i<5;i++){
+      await pool.query(
+        `INSERT INTO reviews (reviewer_id,reviewee_id,score,notes)
+        VALUES ($1,$2,$3,$4)`,
+        [reviewerId, revieweeId, 5, "test"]
+      )
+    }
+
+    const email = "adin@admin.com";
+    const telno = "654321";
+    const level = 2;
+    const poi_id = 1;
+
+    await pool.query(
+      `INSERT INTO admins (poi_id, telno, email, level, password)
+      VALUES ($1, $2, $3, $4, $5)`,
+      [poi_id, telno, email, level, hashedPassword]
+    );
 
     console.log('✅ Fake data inserted successfully!');
   } catch (err) {

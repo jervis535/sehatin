@@ -3,6 +3,8 @@ import pool from './dblogin.js';
 //drops all tables
 const dropTables=async()=>{
     try{
+        await pool.query('DROP TABLE IF EXISTS admins')
+        await pool.query('DROP TABLE IF EXISTS reviews')
         await pool.query('DROP TABLE IF EXISTS user_tokens;')
         await pool.query('DROP TABLE IF EXISTS doctors;');
         await pool.query('DROP TABLE IF EXISTS customer_services;');

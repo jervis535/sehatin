@@ -1,0 +1,139 @@
+<div class="register-panel">
+  <h2 class="panel-title">Register New POI and Admin</h2>
+
+  <form name="registerForm" ng-submit="vm.register()" novalidate>
+    <!-- ── POI FIELDS ── -->
+    <fieldset style="border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem;">
+      <legend><strong>POI Information</strong></legend>
+
+      <div class="form-group">
+        <label for="poiName">Name:</label><br />
+        <input
+          type="text"
+          id="poiName"
+          name="poiName"
+          ng-model="vm.formData.name"
+          required
+          placeholder="e.g. My Coffee Shop"
+        />
+      </div>
+
+      <div class="form-group" style="margin-top: 8px;">
+        <label for="poiCategory">Category:</label><br />
+        <input
+          type="text"
+          id="poiCategory"
+          name="poiCategory"
+          ng-model="vm.formData.category"
+          required
+          placeholder="e.g. Cafe"
+        />
+      </div>
+
+      <div class="form-group" style="margin-top: 8px;">
+        <label for="poiAddress">Address:</label><br />
+        <input
+          type="text"
+          id="poiAddress"
+          name="poiAddress"
+          ng-model="vm.formData.address"
+          required
+          placeholder="e.g. 123 Main St"
+        />
+      </div>
+
+      <div class="form-group" style="margin-top: 8px;">
+        <label for="poiLatitude">Latitude:</label><br />
+        <input
+          type="number"
+          step="any"
+          id="poiLatitude"
+          name="poiLatitude"
+          ng-model="vm.formData.latitude"
+          required
+          placeholder="e.g. -6.200000"
+        />
+      </div>
+
+      <div class="form-group" style="margin-top: 8px;">
+        <label for="poiLongitude">Longitude:</label><br />
+        <input
+          type="number"
+          step="any"
+          id="poiLongitude"
+          name="poiLongitude"
+          ng-model="vm.formData.longitude"
+          required
+          placeholder="e.g. 106.816666"
+        />
+      </div>
+    </fieldset>
+
+    <!-- ── ADMIN FIELDS ── -->
+    <fieldset style="border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem;">
+      <legend><strong>Admin Information</strong></legend>
+
+      <div class="form-group">
+        <label for="adminTelno">Phone (Telno):</label><br />
+        <input
+          type="text"
+          id="adminTelno"
+          name="adminTelno"
+          ng-model="vm.formData.telno"
+          required
+          placeholder="e.g. +62123456789"
+        />
+      </div>
+
+      <div class="form-group" style="margin-top: 8px;">
+        <label for="adminEmail">Email:</label><br />
+        <input
+          type="email"
+          id="adminEmail"
+          name="adminEmail"
+          ng-model="vm.formData.email"
+          required
+          placeholder="e.g. admin@example.com"
+        />
+      </div>
+
+      <div class="form-group" style="margin-top: 8px;">
+        <label for="adminLevel">Level:</label><br />
+        <input
+          type="text"
+          id="adminLevel"
+          name="adminLevel"
+          ng-model="vm.formData.level"
+          required
+          placeholder="e.g. superuser"
+        />
+      </div>
+
+      <div class="form-group" style="margin-top: 8px;">
+        <label for="adminPassword">Password:</label><br />
+        <input
+          type="password"
+          id="adminPassword"
+          name="adminPassword"
+          ng-model="vm.formData.password"
+          required
+          placeholder="Choose a password"
+          minlength="6"
+        />
+      </div>
+    </fieldset>
+
+    <div style="margin-top: 12px;">
+      <button type="submit" ng-disabled="registerForm.$invalid">
+        Register
+      </button>
+    </div>
+
+    <div class="error" style="color: red; margin-top: 8px;" ng-if="vm.errorMessage">
+      {{ vm.errorMessage }}
+    </div>
+    <div class="success" style="color: green; margin-top: 8px;" ng-if="vm.successMessage">
+      {{ vm.successMessage }}
+    </div>
+  </form>
+</div>

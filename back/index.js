@@ -14,6 +14,8 @@ import messageRoute from "./routes/MessagesRoutes.js";
 import evidenceRoute from "./routes/EvidenceRoutes.js";
 import tokenRoutes from './routes/TokenRoute.js';
 import fileUpload from 'express-fileupload';
+import adminRoutes from './routes/AdminRoute.js';
+import reviewRoute from './routes/ReviewRoutes.js';
 
 
 import { setupWebSocket } from './websocket.js';
@@ -38,6 +40,8 @@ app.use(channelsRoute);
 app.use(medicalHistoryRoute);
 app.use(messageRoute);
 app.use(evidenceRoute);
+app.use(adminRoutes);
+app.use(reviewRoute);
 
 // Create HTTP server and attach Express app
 const server = http.createServer(app);

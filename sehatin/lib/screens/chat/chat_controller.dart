@@ -24,11 +24,13 @@ class ChatController {
 
   List<MessageModel> messages = [];
   bool isSending = false;
+  bool isArchived = false;
 
   ChatController(this.channelId, this.user, this.update);
 
   void init() {
     _loadMessages();
+    _loadChannelData();
     _initWebSocket();
   }
 
@@ -37,6 +39,19 @@ class ChatController {
     textController.dispose();
     scrollController.dispose();
   }
+  Future<void> _loadChannelData() async {
+    try {
+      final res = await http.get(Uri.parse('${dotenv.env['API_URL']}/channels/$channelId'));
+      if (res.statusCode == 200) {
+        final chJson = json.decode(res.body);
+        isArchived = chJson['archived'] ?? false;
+        update(() {}); // Trigger UI update
+      }
+    } catch (e) {
+      debugPrint('Error loading channel data: $e');
+    }
+  }
+
 
   void _initWebSocket() {
     final apiBase = _messageService.baseUrl.replaceAll('http', 'ws');

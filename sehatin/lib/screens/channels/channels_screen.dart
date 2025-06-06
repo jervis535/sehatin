@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/channel_model.dart';
 import '../../models/user_model.dart';
 import '../../services/channel_service.dart';
+import '../../services/user_service.dart';
 import 'channel_list_tile.dart';
 
 class ChannelsScreen extends StatefulWidget {
@@ -12,13 +13,40 @@ class ChannelsScreen extends StatefulWidget {
   State<ChannelsScreen> createState() => _ChannelsScreenState();
 }
 
-class _ChannelsScreenState extends State<ChannelsScreen> {
+class _ChannelsScreenState extends State<ChannelsScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   late Future<List<ChannelModel>> _channelsFuture;
+
+  bool get _canViewArchived => widget.user.role == 'user';
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: _canViewArchived ? 2 : 1, vsync: this);
+    _tabController.addListener(_onTabChanged);
     _channelsFuture = ChannelService.getUserChannels(widget.user.id);
+  }
+
+  void _onTabChanged() {
+  if (_tabController.indexIsChanging) return;
+
+  setState(() {
+    if (_tabController.index == 0 || !_canViewArchived) {
+      // Active channels
+      _channelsFuture = ChannelService.getUserChannels(widget.user.id);
+    } else {
+      // Archived channels
+      _channelsFuture = ChannelService.getArchivedUserChannels(widget.user.id);
+    }
+  });
+}
+
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -28,15 +56,23 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 52, 43, 182),
         elevation: 0,
-        leading: BackButton(color: const Color.fromARGB(255, 255, 255, 255)),
+        leading: BackButton(color: Colors.white),
         title: const Text(
           'Channel Saya',
           style: TextStyle(
-            color: Color.fromARGB(255, 255, 255, 255),
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: [
+            const Tab(text: 'Active channels'),
+            if (_canViewArchived) const Tab(text: 'Archived channels'),
+          ],
+          indicatorColor: Colors.white,
+        ),
       ),
       body: FutureBuilder<List<ChannelModel>>(
         future: _channelsFuture,
@@ -56,7 +92,7 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
           final channels = snapshot.data!;
           if (channels.isEmpty) {
             return const Center(
-              child: Text('Belum ada channel.', style: TextStyle(fontSize: 16)),
+              child: Text('No channels.', style: TextStyle(fontSize: 16)),
             );
           }
 

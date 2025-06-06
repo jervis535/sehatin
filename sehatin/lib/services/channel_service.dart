@@ -55,9 +55,28 @@ class ChannelService {
 
 static Future<List<ChannelModel>> getUserChannels(int userId, {String? type}) async {
   var uri = Uri.parse('$_baseUrl/channels?user_id=$userId');
+  print('$_baseUrl/channels?user_id=$userId');
   if (type != null) {
     uri = Uri.parse('$_baseUrl/channels?user_id=$userId&type=$type');
   }
+
+  final res = await http.get(uri);
+
+  if (res.statusCode == 200) {
+    final List data = jsonDecode(res.body) as List;
+    return data
+        .map((e) => ChannelModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  } else if (res.statusCode == 404) {
+    return <ChannelModel>[];
+  }
+
+  throw Exception('Failed to load channels: ${res.statusCode}');
+}
+
+  static Future<List<ChannelModel>> getArchivedUserChannels(int userId, {String? type}) async {
+  var uri = Uri.parse('$_baseUrl/channels?user_id=$userId&archived=true');
+  print(uri);
 
   final res = await http.get(uri);
 

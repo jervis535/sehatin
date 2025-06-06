@@ -70,14 +70,17 @@ router.get('/channels', async (req, res) => {
   }
 });
 
-// delete or archive channel
 router.delete('/channels/:id', async (req, res) => {
   const channelId = parseInt(req.params.id, 10);
   console.log(`[HTTP] DELETE /channels/${channelId} received`);
 
+  const client = await pool.connect();
+
   try {
+    await client.query('BEGIN');
+
     // 1) Fetch channel including archived status and participants
-    const chanRes = await pool.query(
+    const chanRes = await client.query(
       'SELECT user_id0, user_id1, archived FROM channels WHERE id = $1',
       [channelId]
     );
@@ -85,6 +88,7 @@ router.delete('/channels/:id', async (req, res) => {
 
     if (chanRes.rows.length === 0) {
       console.log(`[HTTP] channel ${channelId} not found`);
+      await client.query('ROLLBACK');
       return res.status(404).json({ error: 'Channel not found' });
     }
 
@@ -95,21 +99,55 @@ router.delete('/channels/:id', async (req, res) => {
 
     if (shouldDelete) {
       // 2a) Physically delete the channel
-      result = await pool.query(
+      result = await client.query(
         'DELETE FROM channels WHERE id = $1 RETURNING *',
         [channelId]
       );
       console.log(`[HTTP] deleted channel row:`, result.rows[0]);
     } else {
       // 2b) Archive the channel
-      result = await pool.query(
+      result = await client.query(
         'UPDATE channels SET archived = true WHERE id = $1 RETURNING *',
         [channelId]
       );
       console.log(`[HTTP] archived channel row:`, result.rows[0]);
+
+      // 3) Fetch roles of the users involved
+      const userRolesRes = await client.query(
+        `SELECT id, role FROM users WHERE id = $1 OR id = $2`,
+        [channel.user_id0, channel.user_id1]
+      );
+
+      const roles = {};
+      userRolesRes.rows.forEach(u => {
+        roles[u.id] = u.role;
+      });
+
+      const role0 = roles[channel.user_id0];
+      const role1 = roles[channel.user_id1];
+
+      let reviewerId = null;
+      let revieweeId = null;
+
+      if (role0 === 'user' && (role1 === 'doctor' || role1 === 'customer_service')) {
+        reviewerId = channel.user_id0;
+        revieweeId = channel.user_id1;
+      } else if (role1 === 'user' && (role0 === 'doctor' || role0 === 'customer_service')) {
+        reviewerId = channel.user_id1;
+        revieweeId = channel.user_id0;
+      }
+      await client.query(
+        `INSERT INTO reviews (reviewer_id,reviewee_id)
+        VALUES ($1,$2)`,
+        [reviewerId, revieweeId]
+      );
+      
+
     }
 
-    // 3) Broadcast deletion/archive
+    await client.query('COMMIT');
+
+    // 4) Broadcast deletion/archive
     console.log(
       `[WS] broadcasting channel_deleted to users`,
       channel.user_id0, channel.user_id1
@@ -119,16 +157,20 @@ router.delete('/channels/:id', async (req, res) => {
       userId1: channel.user_id1,
     });
 
-    // 4) HTTP response
+    // 5) HTTP response
     res.json({
       message: shouldDelete ? 'Channel deleted' : 'Channel archived',
       channel: result.rows[0],
     });
   } catch (err) {
+    await client.query('ROLLBACK');
     console.error('[HTTP] Error deleting/archiving channel:', err);
     res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
   }
 });
+
 
 
 
@@ -151,6 +193,51 @@ router.get('/channels/:id', async (req, res) => {
     }
 
     res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get staff chat counts per day or month
+router.get('/channels_count', async (req, res) => {
+  const staffId = parseInt(req.query.staff_id, 10);
+  const period = req.query.period === 'month' ? 'month' : 'day';
+
+  if (isNaN(staffId)) {
+    return res.status(400).json({ error: 'Invalid staff_id parameter' });
+  }
+
+  try {
+    // Check if user is doctor or customer_service
+    const roleCheck = await pool.query(
+      'SELECT role FROM users WHERE id = $1 AND role IN ($2, $3)',
+      [staffId, 'doctor', 'customer service']
+    );
+
+    if (roleCheck.rows.length === 0) {
+      return res.status(400).json({ error: 'User is not a doctor or customer_service staff' });
+    }
+
+    // Group format for day or month
+    const groupByFormat = period === 'month' ? 'YYYY-MM' : 'YYYY-MM-DD';
+
+    const query = `
+      SELECT to_char(created_at, '${groupByFormat}') AS period,
+             COUNT(*) AS chat_count
+      FROM channels
+      WHERE (user_id0 = $1 OR user_id1 = $1)
+        AND archived = false
+      GROUP BY period
+      ORDER BY period ASC
+    `;
+
+    const result = await pool.query(query, [staffId]);
+
+    res.json({
+      staff_id: staffId,
+      period,
+      data: result.rows, // array of { period: "2025-06-05", chat_count: "3" } or monthly
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

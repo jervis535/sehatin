@@ -5,6 +5,8 @@ import '../../services/doctor_service.dart';
 import '../home/home_buttons.dart';
 import '../profile/profile_screen.dart';
 import '../../widgets/custom_bottom_nav.dart';
+import '../channels/channels_screen.dart';
+import '../medical_record/medical_record_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final UserModel user;
@@ -44,26 +46,6 @@ class _HomePageState extends State<HomeScreen> {
     }
     setState(() => loading = false);
   }
-
-  void _navigateToChannels() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => ChannelsScreen(user: widget.user)),
-    );
-  }
-
-  void _navigateToMedicalRecord() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => MedicalRecordScreen(user: widget.user)),
-    );
-  }
-
-  void _navigateToHome() {
-    // Already on home screen, you can add refresh functionality or just do nothing
-    // Or you could scroll to top if needed
-  }
-
   @override
   Widget build(BuildContext context) {
     if (loading) {
@@ -82,7 +64,7 @@ class _HomePageState extends State<HomeScreen> {
       );
     }
 
-    final roleButtons = buildRoleBasedButtons(context, widget.user);
+    final roleButtons = buildRoleBasedButtons(context, widget.user,widget.token);
 
     final profileButton = RoleBasedButton(
       label: 'Profil',

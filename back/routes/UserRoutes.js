@@ -2,9 +2,12 @@ import express from 'express';
 import pool from '../utils/dblogin.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const router = express.Router();
-const SECRET_KEY = 'your-secret-key';//random key
+const SECRET_KEY = process.env.JWT_SECRET
 const ALLOWED_ROLES = ['doctor', 'customer service', 'user'];
 
 //hashing

@@ -34,8 +34,9 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     _controller.attachContext(context);
 
-    final canDelete =
-        widget.user.role == 'doctor' || widget.user.role == 'customer service';
+    final canDelete = _controller.isArchived ||
+      widget.user.role == 'doctor' ||
+      widget.user.role == 'customer service';
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7EAEA),
@@ -53,14 +54,23 @@ class _ChatScreenState extends State<ChatScreen> {
           color: Color.fromARGB(255, 255, 255, 255),
         ),
         actions: [
-          if (canDelete)
+          if (widget.user.role == 'doctor' || widget.user.role == 'customer service')
             IconButton(
               icon: const Icon(Icons.medical_information),
               tooltip: 'View Medical Records',
               onPressed: _controller.viewMedicalRecords,
               color: Colors.black,
             ),
-          if (canDelete)
+          if (
+              widget.user.role == 'doctor' ||
+              widget.user.role == 'customer service')
+            IconButton(
+              icon: const Icon(Icons.delete_forever),
+              tooltip: 'Delete Channel',
+              onPressed: _controller.deleteChannel,
+              color: Colors.black,
+            ),
+            if (_controller.isArchived)
             IconButton(
               icon: const Icon(Icons.delete_forever),
               tooltip: 'Delete Channel',

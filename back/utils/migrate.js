@@ -1,4 +1,7 @@
 import pool from './dblogin.js';
+import dotenv from 'dotenv';
+import bcrypt from 'bcrypt';
+dotenv.config();
 
 //creates all the tables
 const createTables = async () => {
@@ -105,7 +108,44 @@ const createTables = async () => {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         `);
-        
+        //reviews/feedbacks
+        await pool.query(`
+            CREATE TABLE reviews(
+            id SERIAL PRIMARY KEY,
+            reviewer_id INT,
+            reviewee_id INT,
+            score INT,
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (reviewer_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (reviewee_id) REFERENCES users(id) ON DELETE CASCADE
+            );
+        `);
+        //admins
+        await pool.query(`
+            CREATE TABLE admins(
+            id SERIAL PRIMARY KEY,
+            poi_id INT,
+            telno VARCHAR(20) NOT NULL UNIQUE,
+            email VARCHAR(100) NOT NULL UNIQUE,
+            password VARCHAR(255) NOT NULL,
+            level INT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (poi_id) REFERENCES pois(id) ON DELETE CASCADE
+            );
+        `);
+        const email = process.env.ADMIN_EMAIL;
+        const telno = process.env.ADMIN_TELNO;
+        const level = 1;
+        const poi_id = null;
+        const hashedPassword = await bcrypt.hash('123456', 10);
+
+        await pool.query(
+        `INSERT INTO admins (poi_id, telno, email, level, password)
+        VALUES ($1, $2, $3, $4, $5)`,
+        [poi_id, telno, email, level, hashedPassword]
+        );
+
         console.log('Finished migrating tables');
     } catch (error) {
         console.error('Error during migration:', error);

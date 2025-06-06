@@ -1,0 +1,125 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en" ng-app="adminApp">
+<head>
+  <!-- Your existing CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Google Fonts (Poppins) -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <!-- index.html (inside <body>) -->
+  <nav class="sidebar" ng-controller="SidebarController as sb">
+  <h2>Admin Dashboard</h2>
+
+  <!-- If not logged in: Register & Login -->
+  <a
+    ng-href="#!/register"
+    ng-if="!sb.isLoggedIn()"
+    ng-class="{ active: isActive('/register') }"
+    >Register</a
+  >
+  <a
+    ng-href="#!/login"
+    ng-if="!sb.isLoggedIn()"
+    ng-class="{ active: isActive('/login') }"
+    >Login</a
+  >
+
+  <!-- Level 1 only: Verify POIs -->
+  <a
+    ng-href="#!/verify"
+    ng-if="sb.isLoggedIn() && sb.isLevel1()"
+    ng-class="{ active: isActive('/verify') }"
+    >Verify POIs</a
+  >
+
+    <!-- Level 2: Verify Doctors/CS and Chart (existing) -->
+  <a
+    ng-href="#!/verify"
+    ng-if="sb.isLoggedIn() && sb.isLevel2()"
+    ng-class="{ active: isActive('/verify') }"
+    >Verify Doctors/Customer‐Services</a
+  >
+  <a
+    ng-href="#!/chart"
+    ng-if="sb.isLoggedIn() && sb.isLevel2()"
+    ng-class="{ active: isActive('/chart') }"
+    >Chart</a
+  >
+
+  <!-- NEW: Level 2 only: Staff Activity -->
+  <a
+    ng-href="#!/staff-activity"
+    ng-if="sb.isLoggedIn() && sb.isLevel2()"
+    ng-class="{ active: isActive('/staff-activity') }"
+    >Staff Activity</a
+  >
+
+  <!-- NEW: Level 2 only: Staff Reviews -->
+  <a
+    ng-href="#!/staff-reviews"
+    ng-if="sb.isLoggedIn() && sb.isLevel2()"
+    ng-class="{ active: isActive('/staff-reviews') }"
+    >Staff Reviews</a
+  >
+
+  <!-- Logout always if logged in -->
+  <a
+    href=""
+    ng-if="sb.isLoggedIn()"
+    ng-click="sb.logout()"
+    style="margin-top: 1rem; color: #e74c3c;"
+    >Logout</a
+  >
+</nav>
+
+
+  <main class="main-content">
+    <div ng-view></div>
+  </main>
+
+  <!-- Scripts (same order as before) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-route.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Our modular files: -->
+  <script src="js/app.module.js"></script>
+  <script src="js/app.routes.js"></script>
+  <script src="js/services/auth.service.js"></script>
+  <script src="js/services/api.service.js"></script>
+  <script src="js/controllers/register.controller.js"></script>
+  <script src="js/controllers/login.controller.js"></script>
+  <script src="js/controllers/verify.controller.js"></script>
+  <script src="js/controllers/chart.controller.js"></script>
+  <script src="js/controllers/staff-activity.controller.js"></script>
+  <script src="js/controllers/staff-review.controller.js"></script>
+
+  <script>
+    (function () {
+      'use strict';
+
+      angular
+        .module('adminApp')
+        .controller('SidebarController', SidebarController);
+
+      SidebarController.$inject = ['AuthService', '$location'];
+      function SidebarController(AuthService, $location) {
+        const sb = this;
+        sb.isLoggedIn = AuthService.isAuthenticated;
+        sb.isLevel1   = () => AuthService.getLevel() === '1';
+        sb.isLevel2   = () => AuthService.getLevel() === '2';
+        sb.logout     = () => {
+          AuthService.logout();
+          $location.path('/login');
+        };
+      }
+    })();
+  </script>
+</body>
+</html>

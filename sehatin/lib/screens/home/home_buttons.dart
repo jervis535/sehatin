@@ -5,6 +5,7 @@ import '../medical_record/medical_record_screen.dart';
 import '../channels/channels_screen.dart';
 import '../service/service_screen.dart';
 import '../create_medical_record/create_medical_record_screen.dart';
+import '../reviews/reviews_screen.dart';
 
 class RoleBasedButton extends StatelessWidget {
   final String label;
@@ -50,7 +51,7 @@ class RoleBasedButton extends StatelessWidget {
   }
 }
 
-List<Widget> buildRoleBasedButtons(BuildContext context, UserModel user) {
+List<Widget> buildRoleBasedButtons(BuildContext context, UserModel user, String token) {
   final role = (user.role).trim().toLowerCase();
 
   if (role == 'user') {
@@ -96,6 +97,16 @@ List<Widget> buildRoleBasedButtons(BuildContext context, UserModel user) {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => MedicalRecordScreen(user: user)),
+          );
+        },
+      ),
+      RoleBasedButton(
+        label: 'Reviews',
+        iconWidget: const Icon(Icons.history, size: 30, color: Colors.grey),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => ReviewsScreen(reviewerId: user.id,token:token)),
           );
         },
       ),
