@@ -1,0 +1,17 @@
+<div ng-controller="ChatsByPoiController as vm">
+  <h2>Chats by POI</h2>
+  <table border="1" cellpadding="8">
+    <thead>
+      <tr><th>POI</th><th>Chat Count</th></tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="p in vm.byPoi">
+        <td>{{ p.name }}</td>
+        <td>{{ p.count }}</td>
+      </tr>
+      <tr ng-if="!vm.byPoi.length">
+        <td colspan="2">No data available.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,184 @@
+<div ng-controller="ProfileController as vm" class="profile-panel">
+  <h2>My Profile</h2>
+
+  <!-- ─── PERSONAL INFO ─── -->
+  <form name="personalForm" ng-submit="vm.updatePersonalInfo()" novalidate>
+    <fieldset style="border:1px solid #ccc; padding:8px;">
+      <legend>Update Personal Info</legend>
+
+      <div class="form-group">
+        <label>Email:</label><br>
+        <input
+          type="email"
+          ng-model="vm.admin.email"
+          required
+          name="email"
+        />
+      </div>
+
+      <div class="form-group" style="margin-top:8px;">
+        <label>Telephone:</label><br>
+        <input
+          type="text"
+          ng-model="vm.admin.telno"
+          required
+          name="telno"
+        />
+      </div>
+
+      <div class="form-group" style="margin-top:8px;">
+        <label>Current Password:</label><br>
+        <input
+          type="password"
+          ng-model="vm.currentPasswordInfo"
+          required
+          name="currentPasswordInfo"
+        />
+      </div>
+
+      <div style="margin-top:8px;">
+        <button
+          type="submit"
+          ng-disabled="personalForm.$invalid"
+        >
+          Update Info
+        </button>
+      </div>
+    </fieldset>
+  </form>
+
+  <!-- ─── POI DETAILS (LEVEL 2) ─── -->
+  <div ng-if="vm.isLevel2" style="margin-top:16px; border:1px solid #ccc; padding:8px;">
+    <h3>My POI</h3>
+    <form name="poiForm" ng-submit="vm.updatePoiInfo()" novalidate>
+      <div class="form-group">
+        <label>Name:</label><br>
+        <input
+          type="text"
+          ng-model="vm.poi.name"
+          required
+          name="poiName"
+        />
+      </div>
+      <div class="form-group" style="margin-top:8px;">
+        <label>Category:</label><br>
+        <input
+          type="text"
+          ng-model="vm.poi.category"
+          required
+          name="poiCategory"
+        />
+      </div>
+      <div class="form-group" style="margin-top:8px;">
+        <label>Address:</label><br>
+        <input
+          type="text"
+          ng-model="vm.poi.address"
+          name="poiAddress"
+        />
+      </div>
+      <div class="form-group" style="margin-top:8px;">
+        <label>Latitude:</label><br>
+        <input
+          type="number"
+          step="any"
+          ng-model="vm.poi.latitude"
+          name="poiLat"
+        />
+      </div>
+      <div class="form-group" style="margin-top:8px;">
+        <label>Longitude:</label><br>
+        <input
+          type="number"
+          step="any"
+          ng-model="vm.poi.longitude"
+          name="poiLon"
+        />
+      </div>
+           <!-- New Current Password for POI updates -->
+      <div class="form-group" style="margin-top:8px;">
+        <label>Current Password:</label><br>
+        <input
+          type="password"
+          ng-model="vm.currentPasswordPoi"
+          required
+          name="currentPasswordPoi"
+        />
+      </div>
+      <div style="margin-top:8px;">
+       <button
+         type="submit"
+         ng-disabled="poiForm.$invalid || !vm.currentPasswordPoi"
+       >
+         Update POI Info
+       </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ─── PASSWORD CHANGE ─── -->
+  <form name="passwordForm" ng-submit="vm.updatePassword()" novalidate>
+    <fieldset style="margin-top:16px; border:1px solid #ccc; padding:8px;">
+      <legend>Change Password</legend>
+
+      <div class="form-group">
+        <label>Current Password:</label><br>
+        <input
+          type="password"
+          ng-model="vm.currentPasswordPwd"
+          required
+          name="currentPasswordPwd"
+        />
+      </div>
+
+      <div class="form-group" style="margin-top:8px;">
+        <label>New Password:</label><br>
+        <input
+          type="password"
+          ng-model="vm.newPassword"
+          ng-minlength="6"
+          required
+          name="newPassword"
+        />
+      </div>
+
+      <div class="form-group" style="margin-top:8px;">
+        <label>Repeat New Password:</label><br>
+        <input
+          type="password"
+          ng-model="vm.confirmPassword"
+          required
+          name="confirmPassword"
+        />
+      </div>
+
+      <div class="error" ng-if="vm.newPassword !== vm.confirmPassword" style="color:red; margin-top:4px;">
+        New passwords do not match.
+      </div>
+
+      <div style="margin-top:8px;">
+        <button
+          type="submit"
+          ng-disabled="
+            passwordForm.$invalid ||
+            vm.newPassword !== vm.confirmPassword
+          "
+        >
+          Change Password
+        </button>
+      </div>
+    </fieldset>
+  </form>
+
+  <!-- ─── MESSAGES & LOGOUT ─── -->
+  <div style="margin-top:16px;">
+    <button type="button" ng-click="vm.logout()">Logout</button>
+  </div>
+
+  <div class="error" style="color:red; margin-top:8px;" ng-if="vm.errorMessage">
+    {{ vm.errorMessage }}
+  </div>
+  <div class="success" style="color:green; margin-top:8px;" ng-if="vm.successMessage">
+    {{ vm.successMessage }}
+  </div>
+</div>

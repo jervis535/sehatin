@@ -42,10 +42,34 @@
       getChannelCount:               getChannelCount,               // GET /channels_count?staff_id=&period=
 
       // ─── NEW reviews endpoint ───
-      getReviewsForStaff:            getReviewsForStaff   
+      getReviewsForStaff:            getReviewsForStaff,
+      getAdminById:        getAdminById,       // GET /admins/:id
+      updateAdmin:         updateAdmin,        // PUT /admins/:id
+      getPoiById:          getPoiById,         // GET /pois/:id
+      updatePoi:           updatePoi,          // PUT /pois/:id
+      getAllChannels:        getAllChannels,
+      getAllDoctors:         getAllDoctors,
+      getAllCustomerServices:getAllCustomerServices
       
     };
 
+
+    function getAdminById(id) {
+      return $http.get(`${BASE_URL}/admins/${id}`)
+                  .then(r => r.data);
+    }
+    function updateAdmin(id, payload) {
+      return $http.put(`${BASE_URL}/admins/${id}`, payload)
+                  .then(r => r.data);
+    }
+    function getPoiById(id) {
+      return $http.get(`${BASE_URL}/pois/${id}`)
+                  .then(r => r.data);
+    }
+    function updatePoi(id, payload) {
+      return $http.put(`${BASE_URL}/pois/${id}`, payload)
+                  .then(r => r.data);
+    }
     // ——— POIs ———
     function getUnverifiedPois() {
       return $http
@@ -169,6 +193,11 @@
       return $http
         .get(`${BASE_URL}/reviews?reviewee_id=${staffId}`)
         .then(res => res.data);
+    }
+    function getAllChannels() {
+      return $http
+        .get(`${BASE_URL}/channels?archived=false`)
+        .then(r => r.data);
     }
   }
 })();

@@ -1,0 +1,17 @@
+<div ng-controller="DailyChatsController as vm">
+  <h2>Daily Chat Totals (All POIs)</h2>
+  <table border="1" cellpadding="8">
+    <thead>
+      <tr><th>Date</th><th>Chat Count</th></tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="c in vm.dailyCounts">
+        <td>{{ c.date }}</td>
+        <td>{{ c.count }}</td>
+      </tr>
+      <tr ng-if="!vm.dailyCounts.length">
+        <td colspan="2">No chats found.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

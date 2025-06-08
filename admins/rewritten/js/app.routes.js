@@ -56,6 +56,28 @@
         requiresAuth: true,
         minLevel:     2
       })
+      .when('/profile', {
+        templateUrl:  'templates/profile.html',
+        controller:   'ProfileController',
+        controllerAs: 'vm',
+        requiresAuth: true,
+      })
+      .when('/daily-chats', {
+        templateUrl:  'templates/daily-chats.html',
+        controller:   'DailyChatsController',
+        controllerAs: 'vm',
+        requiresAuth: true,
+        minLevel:     1
+      })
+      .when('/chats-by-poi', {
+        templateUrl:  'templates/chats-by-poi.html',
+        controller:   'ChatsByPoiController',
+        controllerAs: 'vm',
+        requiresAuth: true,
+        minLevel:     1
+      })
+
+
 
       // ─── All other routes → redirect to /login ───
       .otherwise({
