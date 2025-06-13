@@ -5,10 +5,10 @@
 }
 
 body {
-    display: flex; 
+    display: flex;
     min-height: 100vh;
-    padding: 0; 
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 0;
+    background: linear-gradient(135deg, #e8f6f2, #bfe7db);
     font-family: 'Poppins', sans-serif;
     color: #2d3436;
 }
@@ -16,7 +16,7 @@ body {
 /* Sidebar kiri */
 .sidebar {
     width: 220px;
-    background: #343a40;
+    background: #165c49;
     color: white;
     display: flex;
     flex-direction: column;
@@ -29,7 +29,7 @@ body {
     font-weight: 700;
     font-size: 1.5rem;
     text-align: center;
-    border-bottom: 1px solid #495057;
+    border-bottom: 1px solid #3bb78f;
     padding-bottom: 0.5rem;
 }
 
@@ -45,7 +45,7 @@ body {
 }
 
 .sidebar a:hover {
-    background: #495057;
+    background: #3bb78f;
 }
 
 .main-content {
@@ -66,7 +66,7 @@ body {
     gap: 1.5rem;
     margin-bottom: 2rem;
     padding-bottom: 2rem;
-    border-bottom: 3px solid #007BFF;
+    border-bottom: 3px solid #207a5e;
 }
 
 .logo {
@@ -79,7 +79,7 @@ body {
 .brand {
     font-size: 3rem;
     font-weight: 700;
-    background: linear-gradient(45deg, #007BFF, #00c6ff);
+    background: linear-gradient(45deg, #207a5e, #3bb78f);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -94,7 +94,7 @@ body {
     margin-bottom: 3rem;
     position: relative;
     padding-bottom: 1rem;
-} 
+}
 
 .panel-title::after {
     content: '';
@@ -104,7 +104,7 @@ body {
     transform: translateX(-50%);
     width: 120px;
     height: 4px;
-    background: linear-gradient(90deg, #007BFF 0%, #00c6ff 100%);
+    background: linear-gradient(90deg, #207a5e 0%, #3bb78f 100%);
     border-radius: 2px;
 }
 
@@ -113,7 +113,7 @@ body {
     background: white;
     border-radius: 1.5rem;
     padding: 2rem;
-    margin-bottom: 1rem;  
+    margin-bottom: 1rem;
     box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.1);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: 2px solid transparent;
@@ -123,14 +123,13 @@ body {
 .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.15);
-    border-color: #007BFF;
+    border-color: #207a5e;
 }
 
-/* Section Titles inside card */
 .card h3 {
     margin-bottom: 1.5rem;
     padding: 0.5rem 1rem;
-    background: linear-gradient(90deg, #007BFF, #00c6ff);
+    background: linear-gradient(90deg, #207a5e, #3bb78f);
     color: white;
     border-radius: 0.5rem;
     display: inline-block;
@@ -160,12 +159,12 @@ li {
 
 li:hover {
     background: #f8f9fa;
-    border-color: #007BFF;
+    border-color: #207a5e;
     transform: translateX(10px);
 }
 
 li a {
-    color: #007BFF;
+    color: #207a5e;
     text-decoration: none;
     font-weight: 600;
 }
@@ -175,7 +174,7 @@ li a:hover {
 }
 
 li button {
-    background: linear-gradient(45deg, #007BFF, #00c6ff);
+    background: linear-gradient(45deg, #207a5e, #3bb78f);
     border: none;
     color: white;
     padding: 0.5rem 1rem;
@@ -191,7 +190,7 @@ li button {
 }
 
 li button:hover {
-    background: linear-gradient(45deg, #0062cc, #009ad6);
+    background: linear-gradient(45deg, #165c49, #2f9c77);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     transform: translateY(-2px);
 }
@@ -205,6 +204,296 @@ li img {
 }
 
 .card .canvas {
-    width : "600";
-    height : "1000";
+    width: 600px;
+    height: 1000px;
 }
+
+.form-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+input {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+input:focus {
+  border-color: #207a5e;
+  box-shadow: 0 0 0 2px rgba(32, 122, 94, 0.25);
+}
+
+button[type="submit"],
+button[type="button"] {
+  background: linear-gradient(45deg, #207a5e, #3bb78f);
+  border: none;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 1rem;
+  transition: background 0.3s ease, transform 0.2s;
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background: linear-gradient(45deg, #165c49, #2f9c77);
+  transform: translateY(-2px);
+}
+
+.error, .success {
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}
+
+.logout-btn {
+  background: linear-gradient(45deg, #ce3b3b, #f37474);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s;
+  box-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+}
+
+.logout-btn:hover {
+  background: linear-gradient(45deg, #b02a2a, #e25656);
+  transform: translateY(-2px);
+}
+
+/* Staff Activity Panel */
+.staff-activity-panel {
+  margin-top: 2rem;
+}
+
+.activity-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  font-size: 0.95rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.05);
+}
+
+.activity-table thead {
+  background: linear-gradient(90deg, #207a5e, #3bb78f);
+  color: white;
+}
+
+.activity-table th,
+.activity-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+
+.activity-table th {
+  font-weight: 600;
+}
+
+.activity-table tbody tr:hover {
+  background-color: #f1f9f4;
+}
+
+.count-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.count-list li {
+  margin-bottom: 0.25rem;
+}
+
+.empty-note {
+  font-style: italic;
+  color: #999;
+}
+
+.info-message, .error-message {
+  margin: 1rem 0;
+  font-weight: 600;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.info-message {
+  background-color: #d5f4ec;
+  color: #165c49;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Staff Reviews Panel */
+.staff-reviews-panel {
+  margin-top: 2rem;
+}
+
+.reviews-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  font-size: 0.95rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.05);
+}
+
+.reviews-table thead {
+  background: linear-gradient(90deg, #207a5e, #3bb78f);
+  color: white;
+}
+
+.reviews-table th,
+.reviews-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+
+.reviews-table th {
+  font-weight: 600;
+}
+
+.reviews-table tbody tr:hover {
+  background-color: #f1f9f4;
+}
+
+.review-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.review-list li {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: #f9fdfb;
+  border-left: 4px solid #207a5e;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.review-header {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #165c49;
+}
+
+.review-body {
+  color: #444;
+  margin-left: 0.5rem;
+  font-style: italic;
+}
+
+.review-body small {
+  color: #888;
+  font-size: 0.75rem;
+}
+
+.empty-note {
+  font-style: italic;
+  color: #999;
+}
+
+/* Register */
+.register-panel {
+  margin-top: 2rem;
+}
+
+.styled-fieldset {
+  border: 2px solid #207a5e;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  background: #f8fbfa;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.styled-fieldset legend {
+  padding: 0 1rem;
+  font-weight: 700;
+  color: #165c49;
+  font-size: 1.1rem;
+}
+
+.register-panel .card {
+  padding: 2rem;
+}
+
+.register-panel button[disabled] {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.register-panel .error {
+  color: red;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.register-panel .success {
+  color: green;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+/* Login */
+.login-panel {
+  margin-top: 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-panel .card {
+  width: 100%;
+  padding: 3rem;
+  height: 600px;
+  border-radius: 1.5rem;
+  background: linear-gradient(45deg, #ffffff, #f8f9fa);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.05);
+}
+
+.login-panel button {
+  width: 100%;
+}
+
+.login-panel .error {
+  color: red;
+  margin-top: 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+

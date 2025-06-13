@@ -4,27 +4,48 @@
     .module('adminApp')
     .controller('DailyChatsController', DailyChatsController);
 
-  DailyChatsController.$inject = ['ApiService'];
-  function DailyChatsController(ApiService) {
+  DailyChatsController.$inject = [];
+  function DailyChatsController() {
     const vm = this;
-    vm.dailyCounts = []; // [{ date: '2025-06-01', count: 5 }, ...]
 
-    init();
+    // Fake data mirip dari database
+    vm.dailyCounts = [
+      { date: '2025-06-10', count: 5 },
+      { date: '2025-06-11', count: 3 },
+      { date: '2025-06-12', count: 7 },
+    ];
 
-    function init() {
-      ApiService.getAllChannels()
-        .then(channels => {
-          // group by date (YYYY-MM-DD)
-          const map = {};
-          channels.forEach(ch => {
-            const date = ch.created_at.slice(0,10); // assume ISO timestamp
-            map[date] = (map[date]||0) + 1;
-          });
-          vm.dailyCounts = Object.keys(map)
-            .sort()
-            .map(date => ({ date, count: map[date] }));
-        })
-        .catch(() => { vm.dailyCounts = []; });
+    // Render Chart
+    renderChart(vm.dailyCounts);
+
+    function renderChart(data) {
+      const ctx = document.getElementById('chatChart').getContext('2d');
+      const labels = data.map(d => d.date);
+      const counts = data.map(d => d.count);
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Total Chats',
+            data: counts,
+            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0
+              }
+            }
+          }
+        }
+      });
     }
   }
 })();
