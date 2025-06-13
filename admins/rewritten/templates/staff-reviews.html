@@ -1,44 +1,46 @@
-<div class="staff-reviews-panel">
+<div class="staff-reviews-panel main-content">
   <h2 class="panel-title">Staff Reviews (Your POI)</h2>
 
-  <div ng-if="vm.loading">Loading review data…</div>
-  <div ng-if="vm.errorMessage" style="color:red;">{{ vm.errorMessage }}</div>
+  <div ng-if="vm.loading" class="info-message">Loading review data…</div>
+  <div ng-if="vm.errorMessage" class="error-message">{{ vm.errorMessage }}</div>
 
-  <table ng-if="!vm.loading && !vm.errorMessage" border="1" cellpadding="8" cellspacing="0">
-    <thead>
-      <tr>
-        <th>Staff ID</th>
-        <th>Name</th>
-        <th>Role</th>
-        <th>Reviews</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="entry in vm.staffReviews">
-        <td>{{ entry.staffId }}</td>
-        <td>{{ entry.name }}</td>
-        <td>{{ entry.role }}</td>
-        <td>
-          <ul style="list-style: none; padding-left: 0;">
-            <li ng-repeat="r in entry.reviews" style="margin-bottom: 0.5rem;">
-
-              <div>
-                <strong>By:</strong> {{ r.reviewer_id }} &nbsp; –
-                <strong>Rating:</strong> {{ r.score }}
-              </div>
-              <div style="margin-left: 1rem; white-space: normal;">
-                “{{ r.notes }}” "{{r.created_at}}"
-              </div>
-            </li>
-            <li ng-if="entry.reviews.length === 0">
-              No reviews
-            </li>
-          </ul>
-        </td>
-      </tr>
-      <tr ng-if="vm.staffReviews.length === 0">
-        <td colspan="4">No staff found for your POI.</td>
-      </tr>
-    </tbody>
-  </table>
+  <div ng-if="!vm.loading && !vm.errorMessage" class="card">
+    <table class="reviews-table">
+      <thead>
+        <tr>
+          <th>Staff ID</th>
+          <th>Name</th>
+          <th>Role</th>
+          <th>Reviews</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="entry in vm.staffReviews">
+          <td>{{ entry.staffId }}</td>
+          <td>{{ entry.name }}</td>
+          <td>{{ entry.role }}</td>
+          <td>
+            <ul class="review-list">
+              <li ng-repeat="r in entry.reviews">
+                <div class="review-header">
+                  <strong>By:</strong> {{ r.reviewer_id }} &nbsp; – 
+                  <strong>Rating:</strong> {{ r.score }}
+                </div>
+                <div class="review-body">
+                  “{{ r.notes }}” <br>
+                  <small>{{ r.created_at }}</small>
+                </div>
+              </li>
+              <li ng-if="entry.reviews.length === 0" class="empty-note">
+                No reviews
+              </li>
+            </ul>
+          </td>
+        </tr>
+        <tr ng-if="vm.staffReviews.length === 0">
+          <td colspan="4" class="empty-note">No staff found for your POI.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
