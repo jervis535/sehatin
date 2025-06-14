@@ -76,8 +76,13 @@
         requiresAuth: true,
         minLevel:     1
       })
-
-
+      .when('/payments-recap', {
+        templateUrl: 'templates/payments-recap.html',
+        controller:  'PaymentsRecapController',
+        controllerAs:'vm',
+        // custom flag we’ll check in run block:
+        minlevel: 1
+      })
 
       // ─── All other routes → redirect to /login ───
       .otherwise({

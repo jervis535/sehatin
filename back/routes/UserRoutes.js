@@ -20,7 +20,7 @@ const hashPassword = async (password) => {
 //gets data from all users (except password)
 router.get('/users', async (req, res) => {
     try {
-        const result = await pool.query('SELECT id, username, email, telno, role FROM users');
+        const result = await pool.query('SELECT id, username, email, telno, role, consultation_count FROM users');
         res.status(200).json(result.rows);
     } catch (error) {
         console.error(error);
@@ -32,7 +32,7 @@ router.get('/users', async (req, res) => {
 router.get('/users/:id', async (req, res) => {
     const userId = parseInt(req.params.id, 10);
     try {
-        const result = await pool.query('SELECT id, username, email, telno, role FROM users WHERE id = $1', [userId]);
+        const result = await pool.query('SELECT id, username, email, telno, role, consultation_count FROM users WHERE id = $1', [userId]);
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'User not found' });
         }
@@ -186,6 +186,40 @@ router.put('/users/:id', async (req, res) => {
         client.release();
     }
 });
+
+// Update user consultation count by id
+router.put('/users/consultation/:id', async (req, res) => {
+    const userId = parseInt(req.params.id, 10);
+    const { add=0, subtract=0, amount=0 } = req.body;
+
+    try {
+        const result = await pool.query(
+            `UPDATE users
+             SET consultation_count = consultation_count + $1 - $2,
+             payment_date = CURRENT_TIMESTAMP
+             WHERE id = $3
+             RETURNING id, username, consultation_count`,
+            [add, subtract, userId]
+        );
+        if (amount!=0){
+            await pool.query(
+                'INSERT INTO payments (amount) VALUES ($1)',
+                [amount]
+            )
+        }
+        
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({ message: 'Consultation count updated', user: result.rows[0] });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
 
 
 router.put('/users/changepass/:id', async (req, res) => {

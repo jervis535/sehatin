@@ -68,15 +68,6 @@ class _PoiSearchScreenState extends State<PoiSearchScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            TextButton.icon(
-              icon: const Icon(
-                Icons.add_circle_outline,
-                color: Color.fromARGB(255, 52, 43, 182),
-              ),
-              label: const Text("Register a new POI"),
-              onPressed: _createPoi,
-              style: TextButton.styleFrom(foregroundColor: Colors.black),
-            ),
             const SizedBox(height: 10),
             if (_error != null)
               Padding(

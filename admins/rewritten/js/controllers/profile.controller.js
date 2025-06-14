@@ -114,23 +114,21 @@
       vm.errorMessage   = '';
       vm.successMessage = '';
 
-      AuthService.login(vm.admin.email, vm.currentPasswordPwd)
-        .then(() => {
-          const payload = {
-            poi_id:   vm.isLevel2 ? vm.poi.id : null,
-            telno:    vm.admin.telno,
-            email:    vm.admin.email,
-            level:    vm.admin.level,
-            password: vm.newPassword
-          };
-          return ApiService.updateAdmin(vm.admin.id, payload);
-        })
+      // 1) verify new/confirm match client‑side
+      if (vm.newPassword !== vm.confirmPassword) {
+        vm.errorMessage = 'New passwords do not match.';
+        return;
+      }
+
+      // 2) call the new changepass endpoint
+      ApiService.changeAdminPassword(vm.admin.id, vm.currentPasswordPwd, vm.newPassword)
         .then(() => {
           vm.successMessage = 'Password changed successfully.';
+          // clear fields
           vm.currentPasswordPwd = vm.newPassword = vm.confirmPassword = '';
         })
         .catch(err => {
-          if (err.status === 401) {
+          if (err.status === 400 && err.data.error === 'Old password is incorrect') {
             vm.errorMessage = 'Current password is incorrect.';
           } else {
             vm.errorMessage = 'Failed to change password.';

@@ -1,12 +1,11 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import '../../models/user_model.dart';
 import '../../services/medical_record_service.dart';
 
 class MedicalRecordForm extends StatefulWidget {
+  final UserModel user;
   final UserModel? selectedUser;
-  const MedicalRecordForm({super.key, required this.selectedUser});
+  const MedicalRecordForm({super.key, required this.selectedUser, required this.user});
 
   @override
   State<MedicalRecordForm> createState() => _MedicalRecordFormState();
@@ -51,6 +50,7 @@ class _MedicalRecordFormState extends State<MedicalRecordForm> {
     try {
       await MedicalRecordService.createRecord(
         userId: widget.selectedUser!.id,
+        doctorId: widget.user.id,
         medications: _medicationsController.text.trim(),
         medicalConditions: _conditionsController.text.trim(),
         notes: _notesController.text.trim(),

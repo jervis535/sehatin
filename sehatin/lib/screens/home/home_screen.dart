@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:sehatin/services/customer_service_service.dart';
+import '/services/customer_service_service.dart';
+import '/services/channel_service.dart'; // Import the channel service
 import '../../models/user_model.dart';
 import '../../services/doctor_service.dart';
 import '../home/home_buttons.dart';
 import '../profile/profile_screen.dart';
 import '../../widgets/custom_bottom_nav.dart';
-import '../channels/channels_screen.dart';
-import '../medical_record/medical_record_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final UserModel user;
@@ -21,11 +20,13 @@ class HomeScreen extends StatefulWidget {
 class _HomePageState extends State<HomeScreen> {
   bool? isVerified;
   bool loading = true;
+  String? dailyChatCount;
 
   @override
   void initState() {
     super.initState();
     _checkVerificationStatus();
+    _fetchDailyChatCount();
   }
 
   Future<void> _checkVerificationStatus() async {
@@ -46,6 +47,35 @@ class _HomePageState extends State<HomeScreen> {
     }
     setState(() => loading = false);
   }
+
+  // Fetch daily chat count based on the role using the existing function in channel_service.dart
+  Future<void> _fetchDailyChatCount() async {
+    final roleLower = widget.user.role.trim().toLowerCase();
+
+    // Only fetch count for customer service or doctor roles
+    if (roleLower == 'customer service' || roleLower == 'doctor') {
+      try {
+        final count = await ChannelService.getStaffChannelCounts(
+          staffId: widget.user.id,
+          period: 'day', // Fetch daily count
+        );
+
+        setState(() {
+          // Check if there's data and map the correct key
+          dailyChatCount = count.isNotEmpty && count[0].containsKey('chat_count')
+              ? count[0]['chat_count'] ?? 0
+              : 0;
+        });
+      } catch (e) {
+        setState(() {
+          dailyChatCount = "0";
+        });
+        print('Error fetching daily chat count: $e');
+      }
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     if (loading) {
@@ -64,7 +94,7 @@ class _HomePageState extends State<HomeScreen> {
       );
     }
 
-    final roleButtons = buildRoleBasedButtons(context, widget.user,widget.token);
+    final roleButtons = buildRoleBasedButtons(context, widget.user, widget.token);
 
     final profileButton = RoleBasedButton(
       label: 'Profil',
@@ -73,8 +103,7 @@ class _HomePageState extends State<HomeScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder:
-                (_) => ProfileScreen(user: widget.user, token: widget.token),
+            builder: (_) => ProfileScreen(user: widget.user, token: widget.token),
           ),
         );
       },
@@ -110,6 +139,20 @@ class _HomePageState extends State<HomeScreen> {
                     ],
                   ),
                   const SizedBox(height: 50),
+
+                  // Display daily chat count if applicable
+                  if (dailyChatCount != null)
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(
+                        'Daily Chat Count: $dailyChatCount',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
 
                   // Tombol role-based + profil
                   Padding(

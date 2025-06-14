@@ -49,7 +49,10 @@
       updatePoi:           updatePoi,          // PUT /pois/:id
       getAllChannels:        getAllChannels,
       getAllDoctors:         getAllDoctors,
-      getAllCustomerServices:getAllCustomerServices
+      getAllCustomerServices:getAllCustomerServices,
+      changeAdminPassword:changeAdminPassword,
+      getDailyPayments:   getDailyPayments,   // GET /payments/daily
+      getMonthlyPayments: getMonthlyPayments  // GET /payments/monthly
       
     };
 
@@ -70,6 +73,7 @@
       return $http.put(`${BASE_URL}/pois/${id}`, payload)
                   .then(r => r.data);
     }
+    
     // ——— POIs ———
     function getUnverifiedPois() {
       return $http
@@ -198,6 +202,23 @@
       return $http
         .get(`${BASE_URL}/channels?archived=false`)
         .then(r => r.data);
+    }
+
+    function changeAdminPassword(adminId, oldpass, newpass) {
+      return $http
+        .put(`${BASE_URL}/admins/changepass/${adminId}`, { oldpass, newpass })
+        .then(res => res.data);
+    }
+
+    function getDailyPayments() {
+      return $http
+        .get(`${BASE_URL}/payments/daily`)
+        .then(res => res.data);
+    }
+    function getMonthlyPayments() {
+      return $http
+        .get(`${BASE_URL}/payments/monthly`)
+        .then(res => res.data);
     }
   }
 })();

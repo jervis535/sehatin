@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/user_model.dart';
 import '../../services/channel_service.dart';
 import '../../services/doctor_service.dart';
+import '../../services/user_service.dart';
 import '../chat/chat_screen.dart';
 import 'consultation_form.dart';
 
@@ -20,6 +21,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
   String? _error;
   bool _loading = true;
   bool _locked = false;
+  String? _lockReason;
 
   @override
   void initState() {
@@ -28,6 +30,17 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
   }
 
   Future<void> _prepare() async {
+    // First lock: no consultations left
+    if ((widget.user.consultationCount ?? 0) <= 0) {
+      setState(() {
+        _locked = true;
+        _lockReason = 'You have no consultations left.';
+        _loading = false;
+      });
+      return;
+    }
+
+    // Second lock: already has an active consultation
     final existing = await ChannelService.getUserChannels(
       widget.user.id,
       type: 'consultation',
@@ -35,6 +48,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
     if (existing.isNotEmpty) {
       setState(() {
         _locked = true;
+        _lockReason = 'You already have an active consultation.\nPlease finish that first.';
         _loading = false;
       });
       return;
@@ -43,8 +57,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
     try {
       final doctors = await DoctorService.getAllDoctors();
       setState(() {
-        _specializations =
-            doctors.map((d) => d.specialization).toSet().toList();
+        _specializations = doctors.map((d) => d.specialization).toSet().toList();
       });
     } catch (e) {
       _error = 'Failed to load specializations';
@@ -84,6 +97,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
         widget.user.id,
         chosenDoctorId,
       );
+      UserService.updateConsultationCount(userId: widget.user.id ,subtract: 1);
 
       if (channelId != null) {
         Navigator.pushReplacement(
@@ -113,15 +127,17 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
         appBar: AppBar(
           title: const Text('Consultation'),
           backgroundColor: const Color.fromARGB(255, 52, 43, 182),
-          foregroundColor:
-              Colors.white,
-          iconTheme: const IconThemeData(color: Colors.white,
-          ), 
+          foregroundColor: Colors.white,
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
-        body: const Center(
-          child: Text(
-            'You already have an active consultation.\nPlease finish that first.',
-            textAlign: TextAlign.center,
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Text(
+              _lockReason ?? 'Access restricted.',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 16),
+            ),
           ),
         ),
       );
@@ -131,15 +147,26 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
       appBar: AppBar(
         title: const Text('Consultation'),
         backgroundColor: const Color.fromARGB(255, 52, 43, 182),
-        foregroundColor: Colors.white, // teks & ikon back putih
-        iconTheme: const IconThemeData(color: Colors.white), // ikon back putih
+        foregroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: ConsultationForm(
-        specializations: _specializations,
-        selectedSpecialization: _selectedSpec,
-        errorMessage: _error,
-        onSelectSpecialization: (spec) => setState(() => _selectedSpec = spec),
-        onSubmit: _findAndChat,
+      body: Column(
+        children: [
+          const SizedBox(height: 16),
+          Text(
+            'Remaining Consultations: ${widget.user.consultationCount ?? 0}',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          Expanded(
+            child: ConsultationForm(
+              specializations: _specializations,
+              selectedSpecialization: _selectedSpec,
+              errorMessage: _error,
+              onSelectSpecialization: (spec) => setState(() => _selectedSpec = spec),
+              onSubmit: _findAndChat,
+            ),
+          ),
+        ],
       ),
     );
   }

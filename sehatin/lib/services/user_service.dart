@@ -113,4 +113,29 @@ class UserService {
     }
   }
 
+  static Future<Map<String, dynamic>> updateConsultationCount({
+    required int userId,
+    double amount=0,
+    int add = 0,
+    int subtract = 0,
+  }) async {
+    final url = Uri.parse('$_baseUrl/users/consultation/$userId');
+    final body = {'add': add, 'subtract': subtract, 'amount': amount};
+
+    final res = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+
+    if (res.statusCode == 200) {
+      return jsonDecode(res.body) as Map<String, dynamic>;
+    } else if (res.statusCode == 404) {
+      throw Exception('User not found');
+    } else {
+      throw Exception('Failed to update consultation count (${res.statusCode}): ${res.body}');
+    }
+  }
 }

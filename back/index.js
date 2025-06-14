@@ -16,6 +16,7 @@ import tokenRoutes from './routes/TokenRoute.js';
 import fileUpload from 'express-fileupload';
 import adminRoutes from './routes/AdminRoute.js';
 import reviewRoute from './routes/ReviewRoutes.js';
+import paymentRoute from './routes/PaymentRoute.js';
 
 
 import { setupWebSocket } from './websocket.js';
@@ -42,6 +43,7 @@ app.use(messageRoute);
 app.use(evidenceRoute);
 app.use(adminRoutes);
 app.use(reviewRoute);
+app.use(paymentRoute);
 
 // Create HTTP server and attach Express app
 const server = http.createServer(app);

@@ -8,6 +8,7 @@ class MedicalRecordService {
 
   static Future<void> createRecord({
     required int userId,
+    required int doctorId,
     required String medications,
     required String medicalConditions,
     required String notes,
@@ -17,6 +18,7 @@ class MedicalRecordService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'user_id': userId,
+        'doctor_id': doctorId,
         'medications': medications,
         'medical_conditions': medicalConditions,
         'notes': notes,

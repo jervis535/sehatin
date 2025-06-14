@@ -5,14 +5,14 @@ const router = express.Router();
 
 // Create a new medical history
 router.post('/medicalrecord', async (req, res) => {
-  const { user_id, medications, medical_conditions, notes } = req.body;
+  const { user_id, doctor_id, medications, medical_conditions, notes } = req.body;
 
   try {
     const result = await pool.query(
-      `INSERT INTO medical_records (user_id, medications, medical_conditions, notes)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO medical_records (user_id, doctor_id, medications, medical_conditions, notes)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [user_id, medications, medical_conditions, notes]
+      [user_id, doctor_id, medications, medical_conditions, notes]
     );
 
     res.status(201).json(result.rows[0]);
@@ -29,7 +29,7 @@ router.get('/medicalrecord', async (req, res) => {
 
     if (userId) {
       result = await pool.query(
-        'SELECT * FROM medical_records WHERE user_id = $1',
+        'SELECT * FROM medical_records WHERE user_id = $1 OR doctor_id = $1',
         [userId]
       );
     } else {

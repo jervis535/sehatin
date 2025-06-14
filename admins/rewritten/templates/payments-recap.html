@@ -1,0 +1,36 @@
+<div class="main-content" ng-controller="PaymentsRecapController as vm">
+  <h2 class="panel-title">Payments Recap</h2>
+
+  <div class="button-group">
+    <button ng-class="{ active: vm.mode==='daily' }"
+            ng-click="vm.switchMode('daily')">
+      Daily
+    </button>
+    <button ng-class="{ active: vm.mode==='monthly' }"
+            ng-click="vm.switchMode('monthly')">
+      Monthly
+    </button>
+  </div>
+
+  <div ng-if="vm.loading">Loading…</div>
+  <div class="error" ng-if="vm.error">{{ vm.error }}</div>
+
+  <table ng-if="!vm.loading && !vm.error" class="recap-table">
+    <thead>
+      <tr>
+        <th>{{ vm.mode === 'daily' ? 'Date' : 'Month' }}</th>
+        <th>Total Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in vm.dataRows">
+        <td>
+          {{ vm.mode==='daily' 
+             ? (row.date | date:'yyyy-MM-dd') 
+             : row.month }}
+        </td>
+        <td>{{ row.total_amount}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

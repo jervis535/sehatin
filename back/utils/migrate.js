@@ -14,9 +14,12 @@ const createTables = async () => {
             email VARCHAR(100) NOT NULL UNIQUE,
             password VARCHAR(255) NOT NULL,
             telno VARCHAR(20) UNIQUE,
-            role VARCHAR(50) NOT NULL
+            role VARCHAR(50) NOT NULL,
+            consultation_count INT DEFAULT 0,
+            payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         `);
+        
         //POI
         await pool.query(`
             CREATE TABLE pois (
@@ -83,11 +86,13 @@ const createTables = async () => {
             CREATE TABLE medical_records (
             id SERIAL PRIMARY KEY,
             user_id INT NOT NULL,
+            doctor_id INT NOT NULL,
             medications TEXT,
             medical_conditions TEXT,
             notes TEXT,
             date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (doctor_id) references users(id) ON DELETE CASCADE
             );
         `);
         //evidence
@@ -133,6 +138,13 @@ const createTables = async () => {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (poi_id) REFERENCES pois(id) ON DELETE CASCADE
             );
+        `);
+        await pool.query(`
+            CREATE TABLE payments(
+            id SERIAL PRIMARY KEY,
+            amount DECIMAL(18, 6),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+            )
         `);
         const email = process.env.ADMIN_EMAIL;
         const telno = process.env.ADMIN_TELNO;

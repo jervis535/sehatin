@@ -6,6 +6,7 @@ import '../channels/channels_screen.dart';
 import '../service/service_screen.dart';
 import '../create_medical_record/create_medical_record_screen.dart';
 import '../reviews/reviews_screen.dart';
+import '../payment/bundle_screen.dart';
 
 class RoleBasedButton extends StatelessWidget {
   final String label;
@@ -91,12 +92,12 @@ List<Widget> buildRoleBasedButtons(BuildContext context, UserModel user, String 
         },
       ),
       RoleBasedButton(
-        label: 'Medical History',
+        label: 'Medical records',
         iconWidget: const Icon(Icons.history, size: 30, color: Colors.grey),
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => MedicalRecordScreen(user: user)),
+            MaterialPageRoute(builder: (_) => MedicalRecordScreen(user: user, showDoctor: true)),
           );
         },
       ),
@@ -110,21 +111,18 @@ List<Widget> buildRoleBasedButtons(BuildContext context, UserModel user, String 
           );
         },
       ),
-    ];
-  } else if (role == 'doctor') {
-    return [
       RoleBasedButton(
-        label: 'Chat',
-        iconWidget: const Icon(Icons.chat, size: 30, color: Colors.grey),
+        label: 'payment',
+        iconWidget: Image.asset('assets/doctor.png', width: 30, height: 30),
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => ChannelsScreen(user: user)),
+            MaterialPageRoute(builder: (_) => BundleScreen(user: user)),
           );
         },
-      )
+      ),
     ];
-  } else if (role == 'customer service') {
+  } else if (role == 'doctor') {
     return [
       RoleBasedButton(
         label: 'Chat',
@@ -142,7 +140,30 @@ List<Widget> buildRoleBasedButtons(BuildContext context, UserModel user, String 
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => CreateMedicalRecordScreen()),
+            MaterialPageRoute(builder: (_) => CreateMedicalRecordScreen(user:user)),
+          );
+        },
+      ),
+      RoleBasedButton(
+        label: 'Medical records',
+        iconWidget: const Icon(Icons.history, size: 30, color: Colors.grey),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => MedicalRecordScreen(user: user,showUser: true)),
+          );
+        },
+      ),
+    ];
+  } else if (role == 'customer service') {
+    return [
+      RoleBasedButton(
+        label: 'Chat',
+        iconWidget: const Icon(Icons.chat, size: 30, color: Colors.grey),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => ChannelsScreen(user: user)),
           );
         },
       ),

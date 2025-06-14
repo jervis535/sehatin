@@ -85,6 +85,11 @@
     ng-class="{active:isActive('/chats-by-poi')}">
     Chats by POI
   </a>
+  <a ng-href="#!/payments-recap"
+    ng-if="sb.isLoggedIn() && sb.isLevel1()"
+    ng-class="{ active: isActive('/payments-recap') }">
+    Payment Recap
+  </a>
 
 
 
@@ -122,6 +127,7 @@
   <script src="js/controllers/profile.controller.js"></script>
   <script src="js/controllers/daily-chats.controller.js"></script>
   <script src="js/controllers/chats-by-poi.controller.js"></script>
+  <script src="js/controllers/payment-recap.controller.js"></script>
 
   <script>
     (function () {

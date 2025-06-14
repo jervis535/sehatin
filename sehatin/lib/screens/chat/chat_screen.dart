@@ -33,11 +33,6 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     _controller.attachContext(context);
-
-    final canDelete = _controller.isArchived ||
-      widget.user.role == 'doctor' ||
-      widget.user.role == 'customer service';
-
     return Scaffold(
       backgroundColor: const Color(0xFFF7EAEA),
       appBar: AppBar(
@@ -61,16 +56,14 @@ class _ChatScreenState extends State<ChatScreen> {
               onPressed: _controller.viewMedicalRecords,
               color: Colors.black,
             ),
-          if (
-              widget.user.role == 'doctor' ||
-              widget.user.role == 'customer service')
+          if (widget.user.role == 'doctor' || widget.user.role == 'customer service')
             IconButton(
               icon: const Icon(Icons.delete_forever),
               tooltip: 'Delete Channel',
               onPressed: _controller.deleteChannel,
               color: Colors.black,
             ),
-            if (_controller.isArchived)
+          if (_controller.isArchived)
             IconButton(
               icon: const Icon(Icons.delete_forever),
               tooltip: 'Delete Channel',
@@ -98,6 +91,14 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
+          if (_controller.isArchived)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "This chat is archived. You cannot send new messages.",
+                style: TextStyle(color: Colors.red.shade700),
+              ),
+            ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             color: Colors.white,
@@ -106,6 +107,7 @@ class _ChatScreenState extends State<ChatScreen> {
               isSending: _controller.isSending,
               onSendText: _controller.sendTextMessage,
               onSendImage: _controller.sendImageMessage,
+              isEnabled: !_controller.isArchived,
             ),
           ),
         ],

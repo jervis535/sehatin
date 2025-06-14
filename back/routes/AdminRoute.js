@@ -135,5 +135,42 @@ router.post('/admins/login', async (req, res) => {
   }
 });
 
+//change password
+router.put('/admins/changepass/:id', async (req, res) => {
+    const adminId = parseInt(req.params.id, 10);
+    const { newpass, oldpass } = req.body;
+
+    if (!newpass || !oldpass) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    try {
+        //gets current admin credentials
+        const adminResult = await pool.query('SELECT * from admins WHERE id = $1', [adminId]);
+        const admin = adminResult.rows[0];
+
+        if (!admin) {
+            return res.status(404).json({ error: 'admin not found' });
+        }
+
+        //checks if password is correct
+        const isOldPasswordCorrect = await bcrypt.compare(oldpass, admin.password);
+        if (!isOldPasswordCorrect) {
+            return res.status(400).json({ error: 'Old password is incorrect' });
+        }
+
+        //hash new password
+        const hashedPassword = await bcrypt.hash(newpass, 10);
+
+        //update the admin un database
+        await pool.query('UPDATE admins SET password = $1 WHERE id = $2', [hashedPassword, adminId]);
+
+        res.status(200).json({ message: 'Password successfully updated' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Database error' });
+    }
+});
+
 
 export default router;

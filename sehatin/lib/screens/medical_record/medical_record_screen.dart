@@ -5,8 +5,10 @@ import 'medical_record_list.dart';
 import '../../models/user_model.dart';
 
 class MedicalRecordScreen extends StatefulWidget {
+  final bool showUser;
   final UserModel user;
-  const MedicalRecordScreen({super.key, required this.user});
+  final bool showDoctor;
+  const MedicalRecordScreen({super.key, required this.user, this.showUser=false, this.showDoctor=false});
 
   @override
   State<MedicalRecordScreen> createState() => _MedicalRecordScreenState();
@@ -40,7 +42,7 @@ class _MedicalRecordScreenState extends State<MedicalRecordScreen> {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           final history = snapshot.data ?? [];
-          return MedicalRecordList(records: history);
+          return MedicalRecordList(records: history,showUser: widget.showUser, showDoctor: widget.showDoctor);
         },
       ),
     );

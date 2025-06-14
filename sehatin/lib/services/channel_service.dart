@@ -123,23 +123,41 @@ static Future<List<ChannelModel>> getUserChannels(int userId, {String? type}) as
     return null;
   }
 
-static Future<List<ChannelModel>> getUserServiceChannels(int userId) async {
-  return getUserChannels(userId, type: 'service');
-}
-
-static Future<List<ChannelModel>> getAgentServiceChannels(int agentUserId) async {
-  final all = await getUserChannels(agentUserId, type: 'service');
-  return all.where((c) =>
-      (c.userId0 == agentUserId || c.userId1 == agentUserId)
-  ).toList();
-}
-
-  static Future<bool> deleteChannel(int channelId) async {
-    final uri = Uri.parse('$_baseUrl/channels/$channelId');
-    final res = await http.delete(uri);
-    return res.statusCode == 200;
+  static Future<List<ChannelModel>> getUserServiceChannels(int userId) async {
+    return getUserChannels(userId, type: 'service');
   }
 
+  static Future<List<ChannelModel>> getAgentServiceChannels(int agentUserId) async {
+    final all = await getUserChannels(agentUserId, type: 'service');
+    return all.where((c) =>
+        (c.userId0 == agentUserId || c.userId1 == agentUserId)
+    ).toList();
+  }
 
+    static Future<bool> deleteChannel(int channelId) async {
+      final uri = Uri.parse('$_baseUrl/channels/$channelId');
+      final res = await http.delete(uri);
+      return res.statusCode == 200;
+    }
 
+  static Future<List<Map<String, dynamic>>> getStaffChannelCounts({
+    required int staffId,
+    String period = 'day',
+  }) async {
+    final uri = Uri.parse('$_baseUrl/channels_count?staff_id=$staffId&period=$period');
+
+    final res = await http.get(uri);
+    print(uri);
+
+    if (res.statusCode == 200) {
+      final Map<String, dynamic> data = jsonDecode(res.body);
+      print(data);
+      return List<Map<String, dynamic>>.from(data['data']);
+    } else if (res.statusCode == 400) {
+      final error = jsonDecode(res.body)['error'];
+      throw Exception('Bad Request: $error');
+    }
+
+    throw Exception('Failed to fetch channel counts: ${res.statusCode}');
+  }
 }

@@ -4,7 +4,8 @@ import 'medical_record_form.dart';
 import 'user_picker_button.dart';
 
 class CreateMedicalRecordScreen extends StatefulWidget {
-  const CreateMedicalRecordScreen({super.key});
+  final UserModel user;
+  const CreateMedicalRecordScreen({super.key, required this.user});
 
   @override
   State<CreateMedicalRecordScreen> createState() =>
@@ -41,7 +42,7 @@ class _CreateMedicalRecordScreenState extends State<CreateMedicalRecordScreen> {
               onUserSelected: _setUser,
             ),
             const SizedBox(height: 16),
-            MedicalRecordForm(selectedUser: _selectedUser),
+            MedicalRecordForm(selectedUser: _selectedUser,user: widget.user),
           ],
         ),
       ),
