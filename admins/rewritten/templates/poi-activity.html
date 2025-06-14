@@ -1,9 +1,9 @@
 <div class="staff-activity-panel main-content">
-  <h2 class="panel-title">Overall Activity Statistics</h2>
+  <h2 class="panel-title">Total Staff Activity (Your POI)</h2>
 
   <!-- Loading and Error -->
   <div ng-if="vm.loading" class="info-message">
-    Loading activity data…
+    Loading total activity data…
   </div>
   <div ng-if="vm.errorMessage" class="error-message">
     {{ vm.errorMessage }}
@@ -21,7 +21,7 @@
     </select>
   </div>
 
-  <!-- Activity Chart -->
+  <!-- Consultation Chart -->
   <div ng-if="!vm.loading && !vm.errorMessage">
     <canvas id="activityChart" width="400" height="200"></canvas>
   </div>

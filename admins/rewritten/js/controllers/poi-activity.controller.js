@@ -3,10 +3,10 @@
 
   angular
     .module('adminApp')
-    .controller('DailyChatsController', DailyChatsController);
+    .controller('PoiActivityController', PoiActivityController);
 
-  DailyChatsController.$inject = ['ApiService', '$q', '$timeout'];
-  function DailyChatsController(ApiService, $q, $timeout) {
+  PoiActivityController.$inject = ['ApiService', '$q', 'AuthService', '$timeout'];
+  function PoiActivityController(ApiService, $q, AuthService, $timeout) {
     const vm = this;
 
     // Initialize counts
@@ -27,28 +27,66 @@
 
     function init() {
       vm.loading = true;
-      
-      // Get aggregated counts by omitting the staffId parameter
-      ApiService.getChannelCount('', vm.selectedPeriod, vm.selectedType)
+      const poiIdStr = AuthService.getPoiId();
+      const adminPoiId = parseInt(poiIdStr, 10);
+
+      if (isNaN(adminPoiId)) {
+        vm.errorMessage = 'Unable to determine your assigned POI.';
+        vm.loading = false;
+        return;
+      }
+
+      // 1) Fetch all doctors + CS in parallel
+      $q.all({
+        doctors: ApiService.getAllDoctors(),
+        services: ApiService.getAllCustomerServices()
+      })
+        .then(({ doctors, services }) => {
+          // 2) Filter only staff with matching poi_id
+          const filteredDoctors = doctors.filter(d => parseInt(d.poi_id, 10) === adminPoiId);
+          const filteredServices = services.filter(s => parseInt(s.poi_id, 10) === adminPoiId);
+
+          // Build an array of staff IDs
+          const staffIds = filteredDoctors.map(d => d.user_id)
+            .concat(filteredServices.map(s => s.user_id));
+
+          // 3) Fetch historical data for each staff member
+          return $q.all(staffIds.map(staffId => {
+            return ApiService.getChannelCount(staffId, vm.selectedPeriod, vm.selectedType);
+          }));
+        })
         .then(results => {
+          // 4) Process and aggregate the historical data
           processHistoricalData(results);
           updateChartData();
           vm.loading = false;
         })
         .catch(err => {
-          console.error('Error loading activity data:', err);
-          vm.errorMessage = 'Failed to load activity data.';
+          console.error('Error loading staff activity data:', err);
+          vm.errorMessage = 'Failed to load staff activity data.';
           vm.loading = false;
         });
     }
 
     function processHistoricalData(results) {
+      // Combine all results into a single array of period data
+      const allPeriods = results.flat();
+
+      // Group by period and sum chat counts
+      const periodMap = new Map();
+      
+      allPeriods.forEach(item => {
+        const count = parseInt(item.chat_count) || 0;
+        if (periodMap.has(item.period)) {
+          periodMap.set(item.period, periodMap.get(item.period) + count);
+        } else {
+          periodMap.set(item.period, count);
+        }
+      });
+
       // Convert to array and sort by date
-      vm.historicalData = results
-        .map(item => ({
-          period: item.period,
-          count: parseInt(item.chat_count) || 0
-        }))
+      vm.historicalData = Array.from(periodMap.entries())
+        .map(([period, count]) => ({ period, count }))
         .sort((a, b) => new Date(a.period) - new Date(b.period));
 
       // If we have more data than selected days, take the most recent ones

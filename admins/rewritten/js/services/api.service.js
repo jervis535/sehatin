@@ -185,12 +185,37 @@
     }
 
     // ─── NEW: Get chat counts (day or month) for a given staff_id ───
-    // period must be either 'day' or 'month'
-    function getChannelCount(staffId, period) {
+    function getChannelCount(staffId = '', period = 'day', type = '') {
+      let url = `${BASE_URL}/channels_count?period=${period}`;
+
+      // Append staff_id if provided
+      if (staffId) {
+        url += `&staff_id=${staffId}`;
+      }
+
+      // Append type if provided
+      if (type) {
+        url += `&type=${type}`;
+      }
+
       return $http
-        .get(`${BASE_URL}/channels_count?staff_id=${staffId}&period=${period}`)
-        .then(res => res.data);
+        .get(url)
+        .then(res => {
+          // Return the 'data' property from the response if it's an array
+          if (res.data && Array.isArray(res.data.data)) {
+            return res.data.data;  // Extract and return the actual array of data
+          } else {
+            // If it's not in the expected format, return an empty array
+            console.error('Invalid API response:', res.data);
+            return [];
+          }
+        })
+        .catch(error => {
+          console.error('Error in API request:', error);
+          return [];  // Return an empty array on error to avoid breaking the controller
+        });
     }
+
 
     // ─── NEW: Get all reviews where reviewee_id = staffId ───
     function getReviewsForStaff(staffId) {

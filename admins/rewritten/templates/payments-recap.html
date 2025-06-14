@@ -15,6 +15,11 @@
   <div ng-if="vm.loading">Loading…</div>
   <div class="error" ng-if="vm.error">{{ vm.error }}</div>
 
+  <!-- Payments Chart -->
+  <div ng-if="!vm.loading && !vm.error" class="chart-container">
+    <canvas id="paymentsChart" width="400" height="200"></canvas>
+  </div>
+
   <table ng-if="!vm.loading && !vm.error" class="recap-table">
     <thead>
       <tr>
@@ -23,13 +28,13 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="row in vm.dataRows">
+      <tr ng-repeat="row in vm.dataRows | orderBy:(vm.mode === 'daily' ? 'date' : 'month'):true">
         <td>
           {{ vm.mode==='daily' 
              ? (row.date | date:'yyyy-MM-dd') 
              : row.month }}
         </td>
-        <td>{{ row.total_amount}}</td>
+        <td>IDR {{ row.total_amount | number:2 }}</td>
       </tr>
     </tbody>
   </table>
