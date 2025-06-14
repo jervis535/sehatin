@@ -33,7 +33,6 @@
         <strong>Username:</strong> {{ doc.username }}<br />
         <strong>Email:</strong> {{ doc.email }}<br />
         <strong>Phone:</strong> {{ doc.telno }}<br />
-        <strong>POI:</strong> {{ doc.poiName }}<br />
         <div ng-if="doc.imageBase64">
           <img
             ng-src="data:image/jpeg;base64,{{ doc.imageBase64 }}"
@@ -63,7 +62,6 @@
         <strong>Username:</strong> {{ cs.username }}<br />
         <strong>Email:</strong> {{ cs.email }}<br />
         <strong>Phone:</strong> {{ cs.telno }}<br />
-        <strong>POI:</strong> {{ cs.poiName }}<br />
         <div ng-if="cs.imageBase64">
           <img
             ng-src="data:image/jpeg;base64,{{ cs.imageBase64 }}"

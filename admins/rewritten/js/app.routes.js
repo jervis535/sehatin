@@ -83,6 +83,14 @@
         // custom flag we’ll check in run block:
         minlevel: 1
       })
+      .when('/poi-activity', {
+        templateUrl:  'templates/poi-activity.html',
+        controller:   'PoiActivityController',
+        controllerAs: 'vm',
+        requiresAuth: true,
+        minLevel: 2   // Only Level 2 admins can access this route
+      })
+
 
       // ─── All other routes → redirect to /login ───
       .otherwise({

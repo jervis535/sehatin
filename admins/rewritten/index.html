@@ -67,6 +67,12 @@
     ng-class="{ active: isActive('/staff-reviews') }"
     >Staff Reviews</a
   >
+  <a
+    ng-href="#!/poi-activity"
+    ng-if="sb.isLoggedIn() && sb.isLevel2()"
+    ng-class="{ active: isActive('/poi-activity') }"
+    >POI Activity</a
+  >
 
   <a ng-href="#!/profile"
     ng-if="sb.isLoggedIn()"
@@ -112,6 +118,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-route.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- Our modular files: -->
   <script src="js/app.module.js"></script>
@@ -128,6 +135,9 @@
   <script src="js/controllers/daily-chats.controller.js"></script>
   <script src="js/controllers/chats-by-poi.controller.js"></script>
   <script src="js/controllers/payment-recap.controller.js"></script>
+  <script src="js/controllers/poi-activity.controller.js"></script>
+
+
 
   <script>
     (function () {

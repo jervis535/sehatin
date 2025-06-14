@@ -60,8 +60,8 @@
               staffId:       staff.staffId,
               name:          staff.name,
               role:          staff.role,
-              dailyCounts:   daily.data || [],
-              monthlyCounts: monthly.data || []
+              dailyCounts:   daily || [],
+              monthlyCounts: monthly || []
             }));
           }));
         })
