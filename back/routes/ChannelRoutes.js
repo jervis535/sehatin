@@ -198,40 +198,57 @@ router.get('/channels/:id', async (req, res) => {
   }
 });
 
-// Get staff chat counts per day or month
+// Get chat counts
 router.get('/channels_count', async (req, res) => {
-  const staffId = parseInt(req.query.staff_id, 10);
+  const staffId = req.query.staff_id ? parseInt(req.query.staff_id, 10) : null;
   const period = req.query.period === 'month' ? 'month' : 'day';
+  const type = req.query.type; // Get the type query parameter
 
-  if (isNaN(staffId)) {
+  // Validate staff_id if it's provided
+  if (staffId && isNaN(staffId)) {
     return res.status(400).json({ error: 'Invalid staff_id parameter' });
   }
 
   try {
-    // Check if user is doctor or customer_service
-    const roleCheck = await pool.query(
-      'SELECT role FROM users WHERE id = $1 AND role IN ($2, $3)',
-      [staffId, 'doctor', 'customer service']
-    );
+    // If staff_id is provided, check if user is doctor or customer_service
+    if (staffId) {
+      const roleCheck = await pool.query(
+        'SELECT role FROM users WHERE id = $1 AND role IN ($2, $3)',
+        [staffId, 'doctor', 'customer service']
+      );
 
-    if (roleCheck.rows.length === 0) {
-      return res.status(400).json({ error: 'User is not a doctor or customer_service staff' });
+      if (roleCheck.rows.length === 0) {
+        return res.status(400).json({ error: 'User is not a doctor or customer_service staff' });
+      }
     }
 
     // Group format for day or month
     const groupByFormat = period === 'month' ? 'YYYY-MM' : 'YYYY-MM-DD';
 
-    const query = `
+    // Base query for counting chats
+    let query = `
       SELECT to_char(created_at, '${groupByFormat}') AS period,
              COUNT(*) AS chat_count
       FROM channels
-      WHERE (user_id0 = $1 OR user_id1 = $1)
+      WHERE (user_id0 = $1 OR user_id1 = $1 OR $1 IS NULL)
         AND archived = false
+    `;
+
+    // Add additional condition for type if it's provided
+    const queryParams = [staffId];
+
+    if (type) {
+      query += ' AND type = $2';
+      queryParams.push(type); // Add type to query parameters
+    }
+
+    query += `
       GROUP BY period
       ORDER BY period ASC
     `;
 
-    const result = await pool.query(query, [staffId]);
+    // Execute the query with the appropriate parameters
+    const result = await pool.query(query, queryParams);
 
     res.json({
       staff_id: staffId,
@@ -242,5 +259,6 @@ router.get('/channels_count', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 export default router;
