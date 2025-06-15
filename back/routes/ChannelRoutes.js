@@ -21,12 +21,12 @@ router.post('/channels', async (req, res) => {
   }
 });
 
-// Get all channels
 router.get('/channels', async (req, res) => {
-  console.log(req.query.archived);
+  console.log(req.query.archived, req.query.all);  // Log 'all' query param for debugging
   const userId = parseInt(req.query.user_id, 10); // Get user_id from query string
   const channelType = req.query.type; // Get type from query string
   const archivedQuery = req.query.archived; // Get archived from query string
+  const allQuery = req.query.all; // Get all from query string
 
   try {
     let result;
@@ -44,18 +44,26 @@ router.get('/channels', async (req, res) => {
       values.push(channelType);
     }
 
-    // Handle archived filtering
-    if (archivedQuery === 'true') {
-      conditions.push(`archived = $${values.length + 1}`);
-      values.push(true);
+    // Handle the 'all' query - return all channels if 'all' is true
+    if (allQuery === 'true') {
+      // Skip the archived filter if 'all' is true
+      if (conditions.length > 0) {
+        query += ' WHERE ' + conditions.join(' AND ');
+      }
     } else {
-      // Default to archived = false
-      conditions.push(`archived = $${values.length + 1}`);
-      values.push(false);
-    }
+      // Handle archived filtering when 'all' is not true
+      if (archivedQuery === 'true') {
+        conditions.push(`archived = $${values.length + 1}`);
+        values.push(true);
+      } else {
+        // Default to archived = false
+        conditions.push(`archived = $${values.length + 1}`);
+        values.push(false);
+      }
 
-    if (conditions.length > 0) {
-      query += ' WHERE ' + conditions.join(' AND ');
+      if (conditions.length > 0) {
+        query += ' WHERE ' + conditions.join(' AND ');
+      }
     }
 
     result = await pool.query(query, values);
@@ -69,6 +77,7 @@ router.get('/channels', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 router.delete('/channels/:id', async (req, res) => {
   const channelId = parseInt(req.params.id, 10);
@@ -129,10 +138,10 @@ router.delete('/channels/:id', async (req, res) => {
       let reviewerId = null;
       let revieweeId = null;
 
-      if (role0 === 'user' && (role1 === 'doctor' || role1 === 'customer_service')) {
+      if (role0 === 'user' && (role1 === 'doctor' || role1 === 'customer service')) {
         reviewerId = channel.user_id0;
         revieweeId = channel.user_id1;
-      } else if (role1 === 'user' && (role0 === 'doctor' || role0 === 'customer_service')) {
+      } else if (role1 === 'user' && (role0 === 'doctor' || role0 === 'customer service')) {
         reviewerId = channel.user_id1;
         revieweeId = channel.user_id0;
       }
@@ -231,7 +240,6 @@ router.get('/channels_count', async (req, res) => {
              COUNT(*) AS chat_count
       FROM channels
       WHERE (user_id0 = $1 OR user_id1 = $1 OR $1 IS NULL)
-        AND archived = false
     `;
 
     // Add additional condition for type if it's provided
