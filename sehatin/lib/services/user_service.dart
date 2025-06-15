@@ -90,12 +90,9 @@ class UserService {
 
   static Future<UserModel?> fetchUserById(userId) async {
     final url = Uri.parse('$_baseUrl/users/$userId');
-    print('Requesting: $url');
 
     try {
       final res = await http.get(url);
-      print('Status: ${res.statusCode}');
-      print('Body: ${res.body}');
 
       if (res.statusCode != 200) {
         throw Exception('Failed to load user: ${res.statusCode}');
@@ -103,12 +100,10 @@ class UserService {
 
       final data = jsonDecode(res.body);
 
-      // data is expected to be a Map<String, dynamic>, representing a single user
       if (data == null || data.isEmpty) return null;
 
-      return UserModel.fromJson(data); // ✔️ Correct usage
+      return UserModel.fromJson(data);
     } catch (e) {
-      print('Fetch user error: $e');
       rethrow;
     }
   }

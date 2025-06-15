@@ -27,7 +27,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   File? _evidenceFile;
   String? _evidenceBase64;
 
-  // Controllers forwarded to CredentialFields
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
   final _nameCtrl = TextEditingController();
@@ -69,7 +68,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // validate role‐fields
     if ((_selectedRole == 'doctor' &&
             (_specializationCtrl.text.isEmpty || _selectedPoi == null)) ||
         (_selectedRole == 'customer service' && _selectedPoi == null)) {
@@ -125,14 +123,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                // Custom Wave Background
                 SizedBox(
                   height: 220,
                   width: double.infinity,
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: Image.asset(
-                      'assets/wave.png', // pastikan wave.png ada di assets
+                      'assets/wave.png',
                       fit: BoxFit.cover,
                       height: 220,
                     ),

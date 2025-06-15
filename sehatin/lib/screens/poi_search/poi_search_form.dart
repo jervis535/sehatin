@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/poi_model.dart';
 import '../../services/poi_service.dart';
-import '../../widgets/custom_text_field.dart';
 
 class PoiSearchForm extends StatefulWidget {
   final Function(List<PoiModel>) onResults;
@@ -62,7 +61,6 @@ class _PoiSearchFormState extends State<PoiSearchForm> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Name Field
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -90,7 +88,6 @@ class _PoiSearchFormState extends State<PoiSearchForm> {
         ),
         const SizedBox(height: 12),
 
-        // Category Field
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -118,7 +115,6 @@ class _PoiSearchFormState extends State<PoiSearchForm> {
         ),
         const SizedBox(height: 12),
 
-        // Latitude Field
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -147,7 +143,6 @@ class _PoiSearchFormState extends State<PoiSearchForm> {
         ),
         const SizedBox(height: 12),
 
-        // Longitude Field
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -176,7 +171,6 @@ class _PoiSearchFormState extends State<PoiSearchForm> {
         ),
         const SizedBox(height: 20),
 
-        // Search Button
         ElevatedButton.icon(
           onPressed: _search,
           icon: const Icon(Icons.search),

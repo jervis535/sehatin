@@ -20,8 +20,6 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  // Handle background notification
-  print("Handling a background message: ${message.messageId}");
 }
 
 void main() async{
@@ -79,17 +77,12 @@ class RootDecider extends StatelessWidget {
         final userJson =
             await AuthService.fetchUserWithToken(userId, token);
         final user = UserModel.fromJson(userJson);
-
-        // ─── NEW: initialize FCM and request permission
         FirebaseMessaging messaging = FirebaseMessaging.instance;
-        await messaging.requestPermission(); // iOS
+        await messaging.requestPermission();
 
-        // ─── NEW: get the FCM token
         String? fcmToken = await messaging.getToken();
-        print("🔑 Obtained FCM token: $fcmToken");
 
         if (fcmToken != null) {
-          // ─── NEW: send it to your backend
           final url = Uri.parse('${dotenv.env['API_URL']}/register-token');
           final response = await http.post(
             url,
@@ -97,17 +90,11 @@ class RootDecider extends StatelessWidget {
             body: jsonEncode({
               'user_id': userId,
               'token': fcmToken,
-              'platform': 'flutter', // or detect 'android' / 'ios' if you like
+              'platform': 'flutter',
             }),
           );
-          if (response.statusCode == 200) {
-            print('✅ FCM token registered on backend');
-          } else {
-            print('❌ Failed to register FCM token: ${response.body}');
-          }
         }
 
-        // ─── NEW: set up foreground notification handling
         FirebaseMessaging.onMessage.listen((RemoteMessage message) {
           final notification = message.notification;
           final android = message.notification?.android;
@@ -119,25 +106,20 @@ class RootDecider extends StatelessWidget {
                   notification.body,
                   NotificationDetails(
                     android: AndroidNotificationDetails(
-                      'chat_messages',       // channelId
-                      'Chat Messages',       // channelName
+                      'chat_messages',
+                      'Chat Messages',
                       importance: Importance.max,
                       priority: Priority.high,
                     ),
                   ),
                   payload: jsonEncode(message.data),
-                )
-                .then((_) => print("🔔 Displayed a foreground notification"));
+                );
           }
         });
 
-        // ─── NEW: optional: handle taps when app is opened/resumed
         FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-          print("🚀 onMessageOpenedApp data: ${message.data}");
-          // e.g. navigate to the specific chat screen using message.data['channel_id']
         });
 
-        // ─── Return your HomeScreen only after we have registered the token
         return HomeScreen(user: user, token: token);
       } catch (_) {
         await SessionService.clearSession();

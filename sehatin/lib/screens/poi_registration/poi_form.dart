@@ -64,7 +64,6 @@ class _PoiFormState extends State<PoiForm> {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // Name Field
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -92,7 +91,6 @@ class _PoiFormState extends State<PoiForm> {
           ),
           const SizedBox(height: 12),
 
-          // Category Field
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -120,7 +118,6 @@ class _PoiFormState extends State<PoiForm> {
           ),
           const SizedBox(height: 12),
 
-          // Address Field
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -148,7 +145,6 @@ class _PoiFormState extends State<PoiForm> {
           ),
           const SizedBox(height: 12),
 
-          // Latitude Field
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -177,7 +173,6 @@ class _PoiFormState extends State<PoiForm> {
           ),
           const SizedBox(height: 12),
 
-          // Longitude Field
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -207,7 +202,6 @@ class _PoiFormState extends State<PoiForm> {
 
           const SizedBox(height: 16),
 
-          // Error Message
           if (_error != null)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -218,7 +212,6 @@ class _PoiFormState extends State<PoiForm> {
               ),
             ),
 
-          // Submit Button
           SubmitButton(loading: _loading, onPressed: _submit),
         ],
       ),

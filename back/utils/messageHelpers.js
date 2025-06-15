@@ -1,22 +1,12 @@
 import pool from './dblogin.js';
 import sharp from 'sharp';
 
-/**
- * Saves a message to the database, optionally resizing base64 image input.
- * @param {Object} message
- * @param {number} message.channel_id
- * @param {number} message.user_id
- * @param {string} message.content
- * @param {string} message.type - 'text', 'image', etc.
- * @param {string} [message.image] - Base64 image string (optional)
- * @returns {Promise<Object>} The saved message row
- */
 export async function saveMessageToDb({ channel_id, user_id, content, type, image }) {
   let imageBuffer = null;
 
   try {
     if (image) {
-      imageBuffer = Buffer.from(image, 'base64'); // Convert base64 to Buffer
+      imageBuffer = Buffer.from(image, 'base64');
       imageBuffer = await sharp(imageBuffer)
         .resize({ width: 800 })
         .jpeg({ quality: 70 })

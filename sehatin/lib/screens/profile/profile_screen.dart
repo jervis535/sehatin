@@ -85,7 +85,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _saveProfile() async {
-    print(_usernameCtrl.text.trim());
     if (_currentPassCtrl.text.isEmpty) {
       return;
     }
@@ -198,7 +197,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Wave frame atas
           Positioned(
             top: 0,
             left: 0,
@@ -210,14 +208,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
 
-          // Konten utama dengan safe area dan scroll
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  const SizedBox(height: 80), // space untuk avatar
-                  // Kotak abu-abu username
+                  const SizedBox(height: 80),
                   Container(
                     width: double.infinity,
                     margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -242,7 +238,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   const SizedBox(height: 40),
 
-                  // Profile info form
                   ProfileInfoForm(
                     usernameCtrl: _usernameCtrl,
                     emailCtrl: _emailCtrl,
@@ -269,7 +264,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   const SizedBox(height: 50),
 
-                  // Kotak merah muda menu (ubah password, keamanan & privasi, keluar)
                   Container(
                     decoration: BoxDecoration(
                       color: const Color(0xFFB87575),
@@ -305,17 +299,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           CustomBottomNav(user: widget.user, token: widget.token),
 
 
-          // Gantikan logo dengan tombol back di kiri atas
           Positioned(
             top: 40,
             left: 12,
             child: GestureDetector(
-              onTap: () => Navigator.pop(context), // Fungsi back
+              onTap: () => Navigator.pop(context),
               child: Container(
                 width: 50,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: Colors.transparent, // Background merah
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Center(

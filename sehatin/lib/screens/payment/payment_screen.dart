@@ -8,11 +8,11 @@ class PaymentScreen extends StatefulWidget {
   final UserModel user;
 
   const PaymentScreen({
-    Key? key,
+    super.key,
     required this.bundleName,
     required this.price,
     required this.user,
-  }) : super(key: key);
+  });
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();

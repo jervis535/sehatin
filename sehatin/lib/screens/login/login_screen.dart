@@ -14,14 +14,13 @@ class LoginScreen extends StatelessWidget {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                // Custom Wave Background
                 SizedBox(
                   height: 220,
                   width: double.infinity,
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: Image.asset(
-                      'assets/wave.png', // export bentuk wave dari Figma
+                      'assets/wave.png',
                       fit: BoxFit.cover,
                       height: 220,
                     ),

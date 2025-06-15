@@ -1,22 +1,17 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en" ng-app="adminApp">
 <head>
-  <!-- Your existing CSS -->
   <link rel="stylesheet" href="style.css" />
-
-  <!-- Google Fonts (Poppins) -->
   <link
     href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
     rel="stylesheet"
   />
 </head>
 <body>
-  <!-- index.html (inside <body>) -->
+
   <nav class="sidebar" ng-controller="SidebarController as sb">
   <h2>Admin Dashboard</h2>
 
-  <!-- If not logged in: Register & Login -->
   <a
     ng-href="#!/register"
     ng-if="!sb.isLoggedIn()"
@@ -30,7 +25,6 @@
     >Login</a
   >
 
-  <!-- Level 1 only: Verify POIs -->
   <a
     ng-href="#!/verify"
     ng-if="sb.isLoggedIn() && sb.isLevel1()"
@@ -38,7 +32,6 @@
     >Verify POIs</a
   >
 
-    <!-- Level 2: Verify Doctors/CS and Chart (existing) -->
   <a
     ng-href="#!/verify"
     ng-if="sb.isLoggedIn() && sb.isLevel2()"
@@ -46,7 +39,6 @@
     >Verify Doctors/Customer‐Services</a
   >
 
-  <!-- NEW: Level 2 only: Staff Activity -->
   <a
     ng-href="#!/staff-activity"
     ng-if="sb.isLoggedIn() && sb.isLevel2()"
@@ -54,7 +46,6 @@
     >Staff Activity</a
   >
 
-  <!-- NEW: Level 2 only: Staff Reviews -->
   <a
     ng-href="#!/staff-reviews"
     ng-if="sb.isLoggedIn() && sb.isLevel2()"
@@ -74,7 +65,6 @@
     Profile
   </a>
 
-  <!-- Level 1 only pages -->
   <a ng-href="#!/daily-chats"
     ng-if="sb.isLoggedIn() && sb.isLevel1()"
     ng-class="{active:isActive('/daily-chats')}">
@@ -91,9 +81,6 @@
     Payment Recap
   </a>
 
-
-
-  <!-- Logout always if logged in -->
   <a
     href=""
     ng-if="sb.isLoggedIn()"
@@ -108,13 +95,11 @@
     <div ng-view></div>
   </main>
 
-  <!-- Scripts (same order as before) -->
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-route.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- Our modular files: -->
   <script src="js/app.module.js"></script>
   <script src="js/app.routes.js"></script>
   <script src="js/services/auth.service.js"></script>

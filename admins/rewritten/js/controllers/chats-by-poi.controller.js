@@ -7,43 +7,39 @@
   ChatsByPoiController.$inject = ['ApiService','$q'];
   function ChatsByPoiController(ApiService, $q) {
     const vm = this;
-    vm.byPoi = []; // [{ poiId, name, count }...]
+    vm.byPoi = [];
 
     init();
 
     function init() {
-      // fetch channels + staff lists
       $q.all({
         channels: ApiService.getAllChannels(),
         doctors:  ApiService.getAllDoctors(),
         services: ApiService.getAllCustomerServices()
       })
       .then(({channels, doctors, services}) => {
-        // build user→poi map, skipping users with null/undefined poi_id
         const poiMap = {};
         doctors.concat(services).forEach(u => {
-          if (u.poi_id != null) {  // skip null or undefined
+          if (u.poi_id != null) {
             poiMap[u.user_id] = u.poi_id;
           }
         });
 
-        // count per poi_id
         const countMap = {};
         channels.forEach(ch => {
           [ch.user_id0, ch.user_id1].forEach(uid => {
             const pid = poiMap[uid];
-            if (pid != null) { // only count if poi_id is valid
+            if (pid != null) {
               countMap[pid] = (countMap[pid] || 0) + 1;
             }
           });
         });
 
-        // fetch POI names asynchronously for each poiId
         const poiIds = Object.keys(countMap);
         const promises = poiIds.map(pid =>
           ApiService.fetchPoiName(pid).then(name => ({
             poiId: pid,
-            name: name,    // real POI name from API
+            name: name,
             count: countMap[pid]
           }))
         );

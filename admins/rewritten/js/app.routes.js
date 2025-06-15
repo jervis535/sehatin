@@ -9,7 +9,6 @@
   appConfig.$inject = ['$routeProvider', '$locationProvider'];
   function appConfig($routeProvider, $locationProvider) {
     $routeProvider
-      // ─── Register Route (no auth required) ───
       .when('/register', {
         templateUrl:  'templates/register.html',
         controller:   'RegisterController',
@@ -17,7 +16,6 @@
         requiresAuth: false
       })
 
-      // ─── Login Route (no auth required) ───
       .when('/login', {
         templateUrl:  'templates/login.html',
         controller:   'LoginController',
@@ -25,16 +23,14 @@
         requiresAuth: false
       })
 
-      // ─── Verify Route (requires auth) ───
       .when('/verify', {
         templateUrl:  'templates/verify.html',
         controller:   'VerifyController',
         controllerAs: 'vm',
         requiresAuth: true,
-        minLevel: 1   // both level 1 & level 2 can go, but content is hidden per level
+        minLevel: 1
       })
 
-      // ─── Chart Route (requires auth) ───
       .when('/chart', {
         templateUrl:  'templates/chart.html',
         controller:   'ChartController',
@@ -80,7 +76,6 @@
         templateUrl: 'templates/payments-recap.html',
         controller:  'PaymentsRecapController',
         controllerAs:'vm',
-        // custom flag we’ll check in run block:
         minlevel: 1
       })
       .when('/poi-activity', {
@@ -88,11 +83,9 @@
         controller:   'PoiActivityController',
         controllerAs: 'vm',
         requiresAuth: true,
-        minLevel: 2   // Only Level 2 admins can access this route
+        minLevel: 2
       })
 
-
-      // ─── All other routes → redirect to /login ───
       .otherwise({
         redirectTo: '/login'
       });
@@ -102,12 +95,10 @@
 
   appRun.$inject = ['$rootScope', '$location', 'AuthService'];
   function appRun($rootScope, $location, AuthService) {
-    // Sidebar "active" helper remains the same
     $rootScope.isActive = function (viewLocation) {
       return viewLocation === $location.path();
     };
 
-    // On every route change, block if requiresAuth && not authenticated
     $rootScope.$on('$routeChangeStart', function (event, next, current) {
       if (next.$$route && next.$$route.requiresAuth) {
         if (!AuthService.isAuthenticated()) {
@@ -115,13 +106,10 @@
           $location.path('/login');
         }
       }
-            // If route defines a minLevel, ensure user meets it
       if (next.$$route && next.$$route.minLevel) {
         const userLevel = parseInt(AuthService.getLevel(), 10);
         if (isNaN(userLevel) || userLevel < next.$$route.minLevel) {
-          // Not authorized for this route
           event.preventDefault();
-          // If they’re level 1 but trying to see /chart, send them to /verify
           if (userLevel === 1) {
             $location.path('/verify');
           } else {
@@ -131,7 +119,6 @@
         }
       }
 
-      // If already logged in and goes to /login or /register, redirect to /chart
       if (next.$$route && (next.$$route.originalPath === '/login' || next.$$route.originalPath === '/register')) {
         if (AuthService.isAuthenticated()) {
 

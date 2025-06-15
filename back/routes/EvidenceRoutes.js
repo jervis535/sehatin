@@ -7,12 +7,11 @@ const router = express.Router();
 // Create new evidence
 router.post('/evidences/:user_id', async (req, res) => {
   const { user_id } = req.params;
-  const { image } = req.body; // expect base64 string in body
+  const { image } = req.body;
 
   if (!image) return res.status(400).send("No image uploaded");
 
   try {
-    // Convert base64 to buffer and resize/compress with sharp
     const imageBuffer = Buffer.from(image, 'base64');
     const processedBuffer = await sharp(imageBuffer)
       .resize({ width: 800 })
@@ -39,7 +38,6 @@ router.get('/evidences/:user_id', async (req, res) => {
     const imageBuffer = result.rows[0].image;
     if (!imageBuffer) return res.status(404).send("No image found");
 
-    // Convert buffer to base64 and return JSON (more flexible than raw image)
     const imageBase64 = imageBuffer.toString('base64');
     res.json({ image: imageBase64 });
   } catch (err) {

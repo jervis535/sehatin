@@ -8,7 +8,7 @@
   PaymentsRecapController.$inject = ['ApiService', '$timeout'];
   function PaymentsRecapController(ApiService, $timeout) {
     const vm = this;
-    vm.mode = 'daily';   // 'daily' or 'monthly'
+    vm.mode = 'daily';
     vm.dataRows = [];
     vm.chart = null;
     vm.chartData = [];
@@ -53,15 +53,12 @@
     }
 
     function processChartData(rows) {
-      // Sort by date
       const sortedData = [...rows].sort((a, b) => 
         new Date(a.date || a.month) - new Date(b.date || b.month)
       );
 
-      // Take last 7 entries
       const recentData = sortedData.slice(-7);
       
-      // Prepare chart data
       vm.chartLabels = recentData.map(item => 
         formatPeriodLabel(item.date || item.month)
       );
@@ -69,7 +66,6 @@
         parseFloat(item.total_amount) || 0
       );
 
-      // Render chart
       $timeout(() => renderChart(), 0);
     }
 
@@ -89,7 +85,7 @@
       }
 
       const chartTitle = `Last 7 ${vm.mode === 'daily' ? 'Days' : 'Months'} Payments`;
-      const backgroundColor = '#4e73df'; // Blue color for payments
+      const backgroundColor = '#4e73df';
 
       vm.chart = new Chart(ctx, {
         type: 'bar',

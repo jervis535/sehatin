@@ -6,13 +6,13 @@ import '../../models/medical_record_model.dart';
 class MedicalRecordItem extends StatefulWidget {
   final MedicalRecord record;
   final bool showUser;
-  final bool showDoctor; // Added
+  final bool showDoctor;
 
   const MedicalRecordItem({
     super.key,
     required this.record,
     this.showUser = false,
-    this.showDoctor = false, // Added
+    this.showDoctor = false,
   });
 
   @override
@@ -21,9 +21,9 @@ class MedicalRecordItem extends StatefulWidget {
 
 class _MedicalRecordItemState extends State<MedicalRecordItem> {
   String? username;
-  String? doctorname; // Added
+  String? doctorname;
   bool isLoadingUser = false;
-  bool isLoadingDoctor = false; // Added
+  bool isLoadingDoctor = false;
   
   @override
   void initState() {
@@ -49,7 +49,7 @@ class _MedicalRecordItemState extends State<MedicalRecordItem> {
         });
       }
     } catch (e) {
-      print('Failed to fetch user: $e');
+      debugPrint('Failed to fetch user: $e');
     } finally {
       setState(() {
         isLoadingUser = false;
@@ -57,7 +57,6 @@ class _MedicalRecordItemState extends State<MedicalRecordItem> {
     }
   }
 
-  // New function to load doctor
   Future<void> _loadDoctor() async {
     setState(() {
       isLoadingDoctor = true;
@@ -71,7 +70,7 @@ class _MedicalRecordItemState extends State<MedicalRecordItem> {
         });
       }
     } catch (e) {
-      print('Failed to fetch doctor: $e');
+      debugPrint('Failed to fetch doctor: $e');
     } finally {
       setState(() {
         isLoadingDoctor = false;
@@ -115,7 +114,6 @@ class _MedicalRecordItemState extends State<MedicalRecordItem> {
               const SizedBox(height: 12),
             ],
 
-            // Show doctor info if showDoctor == true
             if (widget.showDoctor) ...[
               Row(
                 children: [

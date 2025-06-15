@@ -6,7 +6,7 @@ import '../screens/medical_record/medical_record_screen.dart';
 
 class CustomBottomNav extends StatelessWidget {
   final UserModel user;
-  final int selectedIndex; // For highlighting
+  final int selectedIndex;
   final String token;
 
   const CustomBottomNav({

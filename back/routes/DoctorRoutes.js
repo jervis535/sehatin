@@ -15,7 +15,6 @@ router.get('/doctors', async (req, res) => {
         if (verified === 'false') {
             conditions.push(`verified = false`);
         } else {
-            // Default to verified = true
             conditions.push(`verified = true`);
         }
 

@@ -1,7 +1,6 @@
 <div class="verify-panel">
   <h2 class="panel-title">Verify Items</h2>
 
-  <!-- ─── POI LIST (Level 1 only) ──────────────────────────────────── -->
   <section ng-if="vm.adminLevel === 1">
     <h3>Unverified POIs</h3>
     <ul id="poi-list">
@@ -25,7 +24,6 @@
     </ul>
   </section>
 
-  <!-- ─── DOCTOR LIST (Level 2 only) ───────────────────────────────── -->
   <section ng-if="vm.adminLevel === 2">
     <h3>Unverified Doctors (Your POI)</h3>
     <ul id="doctor-list">
@@ -54,7 +52,6 @@
 
   <hr ng-if="vm.adminLevel === 2" />
 
-  <!-- ─── CUSTOMER SERVICE LIST (Level 2 only) ──────────────────────── -->
   <section ng-if="vm.adminLevel === 2">
     <h3>Unverified Customer Services (Your POI)</h3>
     <ul id="customer-service-list">

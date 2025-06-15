@@ -1,5 +1,3 @@
-// lib/models/poi_model.dart
-
 class PoiModel {
   final int id;
   final String name;

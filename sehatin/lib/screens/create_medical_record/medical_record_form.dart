@@ -19,7 +19,6 @@ class _MedicalRecordFormState extends State<MedicalRecordForm> {
   bool _isSubmitting = false;
   String? _error;
 
-  // Custom colors
   static const Color primaryColor = Color.fromARGB(255, 52, 43, 182);
 
   @override
@@ -157,7 +156,6 @@ class _MedicalRecordFormState extends State<MedicalRecordForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header
             Container(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Row(
@@ -198,7 +196,6 @@ class _MedicalRecordFormState extends State<MedicalRecordForm> {
 
             const SizedBox(height: 20),
 
-            // Error message
             if (_error != null)
               Container(
                 padding: const EdgeInsets.all(12),
@@ -226,7 +223,6 @@ class _MedicalRecordFormState extends State<MedicalRecordForm> {
                 ),
               ),
 
-            // Form
             Form(
               key: _formKey,
               child: Column(
@@ -261,7 +257,6 @@ class _MedicalRecordFormState extends State<MedicalRecordForm> {
 
                   const SizedBox(height: 32),
 
-                  // Submit Button
                   Container(
                     width: double.infinity,
                     height: 56,

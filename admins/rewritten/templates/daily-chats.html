@@ -1,7 +1,6 @@
 <div class="staff-activity-panel main-content">
   <h2 class="panel-title">Overall Activity Statistics</h2>
 
-  <!-- Loading and Error -->
   <div ng-if="vm.loading" class="info-message">
     Loading activity data…
   </div>
@@ -9,7 +8,6 @@
     {{ vm.errorMessage }}
   </div>
 
-  <!-- Controls for selecting type and period -->
   <div class="controls">
     <select ng-model="vm.selectedType" ng-change="vm.updateChart()">
       <option value="consultation">Consultation</option>
@@ -21,7 +19,6 @@
     </select>
   </div>
 
-  <!-- Activity Chart -->
   <div ng-if="!vm.loading && !vm.errorMessage">
     <canvas id="activityChart" width="400" height="200"></canvas>
   </div>

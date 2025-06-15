@@ -12,7 +12,6 @@ class UserSearchForm extends StatelessWidget {
     required this.onSearch,
   });
 
-  // Custom colors
   static const Color primaryColor = Color.fromARGB(255, 52, 43, 182);
 
   @override
@@ -33,7 +32,6 @@ class UserSearchForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Section
           Row(
             children: [
               Container(
@@ -58,7 +56,6 @@ class UserSearchForm extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          // Search Input Section
           Row(
             children: [
               Expanded(
@@ -129,7 +126,6 @@ class UserSearchForm extends StatelessWidget {
 
               const SizedBox(width: 12),
 
-              // Search Button
               Container(
                 height: 56,
                 decoration: BoxDecoration(
@@ -206,7 +202,6 @@ class UserSearchForm extends StatelessWidget {
             ],
           ),
 
-          // Quick Search Tips
           if (!loading)
             Padding(
               padding: const EdgeInsets.only(top: 12),

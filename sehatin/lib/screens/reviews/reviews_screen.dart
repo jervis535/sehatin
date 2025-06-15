@@ -222,7 +222,6 @@ class _ReviewTileState extends State<ReviewTile> {
       elevation: 4,
       child: Column(
         children: [
-          // Header
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
@@ -274,7 +273,6 @@ class _ReviewTileState extends State<ReviewTile> {
             ),
           ),
 
-          // Content
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(

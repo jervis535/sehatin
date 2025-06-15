@@ -10,11 +10,9 @@
     const vm = this;
     vm.title      = 'CHANNELS';
     vm.labels     = ['Consultation', 'Service'];
-    vm.dataValues = [3, 3]; // static data, same as your original
+    vm.dataValues = [3, 3];
 
-    // Wait 0ms so that Angular has inserted chart.html into the DOM
     $timeout(() => {
-      // Grab <canvas id="dataChart"> directly via document
       const canvas = $document[0].getElementById('dataChart');
       if (!canvas) {
         console.error('ChartController: <canvas id="dataChart"> not found!');

@@ -10,51 +10,49 @@
     const BASE_URL = 'http://localhost:3000';
 
     return {
-      // POI endpoints
+      // POI Operations
       getUnverifiedPois: getUnverifiedPois,
-      verifyPoi:        verifyPoi,
-      deletePoi:        deletePoi,
-
-      // Doctor endpoints
-      getUnverifiedDoctors: getUnverifiedDoctors,
-      verifyDoctor:         verifyDoctor,
-      deleteDoctor:         deleteDoctor,
-
-      // Customer Service endpoints
-      getUnverifiedCustomerServices: getUnverifiedCustomerServices,
-      verifyCustomerService:         verifyCustomerService,
-      deleteCustomerService:         deleteCustomerService,
-
-      // Auxiliaries
-      fetchUserInfo:    fetchUserInfo,
-      fetchPoiName:     fetchPoiName,
+      verifyPoi:         verifyPoi,
+      deletePoi:         deletePoi,
+      fetchPoiName:      fetchPoiName,
       fetchEvidenceImage: fetchEvidenceImage,
-      fetchAdminInfo:      fetchAdminInfo,
-      getAllAdmins:                  getAllAdmins,
+      getPoiById:        getPoiById,
+      updatePoi:         updatePoi,
+      createPoi:         createPoi,
 
-      createPoi:                   createPoi,
-      createAdmin:                 createAdmin,
-      // ─── NEW staff‐listing endpoints ───
-      getAllDoctors:                 getAllDoctors,                 // GET /doctors
-      getAllCustomerServices:        getAllCustomerServices,        // GET /customerservices
+      // Doctor Operations
+      getUnverifiedDoctors:    getUnverifiedDoctors,
+      verifyDoctor:            verifyDoctor,
+      deleteDoctor:            deleteDoctor,
+      getAllDoctors:           getAllDoctors,
 
-      // ─── NEW channels_count endpoints ───
-      getChannelCount:               getChannelCount,               // GET /channels_count?staff_id=&period=
+      // Customer Service Operations
+      getUnverifiedCustomerServices: getUnverifiedCustomerServices,
+      verifyCustomerService:        verifyCustomerService,
+      deleteCustomerService:        deleteCustomerService,
+      getAllCustomerServices:       getAllCustomerServices,
 
-      // ─── NEW reviews endpoint ───
-      getReviewsForStaff:            getReviewsForStaff,
-      getAdminById:        getAdminById,       // GET /admins/:id
-      updateAdmin:         updateAdmin,        // PUT /admins/:id
-      getPoiById:          getPoiById,         // GET /pois/:id
-      updatePoi:           updatePoi,          // PUT /pois/:id
-      getAllChannels:        getAllChannels,
-      getAllDoctors:         getAllDoctors,
-      getAllCustomerServices:getAllCustomerServices,
-      changeAdminPassword:changeAdminPassword,
-      getDailyPayments:   getDailyPayments,   // GET /payments/daily
-      getMonthlyPayments: getMonthlyPayments  // GET /payments/monthly
-      
+      // Admin Operations
+      fetchUserInfo:    fetchUserInfo,
+      fetchAdminInfo:   fetchAdminInfo,
+      getAllAdmins:     getAllAdmins,
+      getAdminById:     getAdminById,
+      updateAdmin:      updateAdmin,
+      changeAdminPassword: changeAdminPassword,
+      createAdmin:      createAdmin,
+
+      // Channel Operations
+      getChannelCount:  getChannelCount,
+      getAllChannels:   getAllChannels,
+
+      // Reviews
+      getReviewsForStaff: getReviewsForStaff,
+
+      // Payments
+      getDailyPayments:   getDailyPayments,
+      getMonthlyPayments: getMonthlyPayments
     };
+
 
 
     function getAdminById(id) {
@@ -74,7 +72,6 @@
                   .then(r => r.data);
     }
     
-    // ——— POIs ———
     function getUnverifiedPois() {
       return $http
         .get(`${BASE_URL}/pois?verified=false`)
@@ -91,7 +88,6 @@
         .then(res => res.data);
     }
 
-    // ——— Doctors ———
     function getUnverifiedDoctors() {
       return $http
         .get(`${BASE_URL}/doctors?verified=false`)
@@ -108,7 +104,6 @@
         .then(res => res.data);
     }
 
-    // ——— Customer Services ———
     function getUnverifiedCustomerServices() {
       console.log(`${BASE_URL}/customerservices?verified=false`)
       return $http
@@ -126,7 +121,6 @@
         .then(res => res.data);
     }
 
-    // ——— Auxiliaries ———
     function fetchUserInfo(userId) {
       return $http
         .get(`${BASE_URL}/users/${userId}`)
@@ -141,29 +135,23 @@
       return $http
         .get(`${BASE_URL}/evidences/${userId}`)
         .then(res => {
-          // Expecting { image: "<base64-string>" }
           return res.data.image || null;
         })
         .catch(() => {
-          // If no evidence or 404, just return null, don’t break the promise chain
           return null;
         });
     }
     function createPoi(poiData) {
-      // poiData should be { name, category, address, latitude, longitude }
       return $http
         .post(`${BASE_URL}/pois`, poiData)
         .then(res => res.data);
     }
 
-    // Create a new Admin (given the returned poi_id from createPoi)
     function createAdmin(adminData) {
-      // adminData should be { poi_id, telno, email, level, password }
       return $http
         .post(`${BASE_URL}/admins`, adminData)
         .then(res => res.data);
     }
-    // ─── NEW: GET /admins/:id ───
     function fetchAdminInfo(adminId) {
       return $http.get(`${BASE_URL}/admins/${adminId}`).then(res => res.data);
     }
@@ -174,26 +162,21 @@
         .then(res => res.data);
     }
 
-     // ─── NEW: Return all doctors (assumes your backend exposes GET /doctors) ───
     function getAllDoctors() {
       return $http.get(`${BASE_URL}/doctors`).then(res => res.data);
     }
 
-    // ─── NEW: Return all customer‐service staff (GET /customerservices) ───
     function getAllCustomerServices() {
       return $http.get(`${BASE_URL}/customerservices`).then(res => res.data);
     }
 
-    // ─── NEW: Get chat counts (day or month) for a given staff_id ───
     function getChannelCount(staffId = '', period = 'day', type = '') {
       let url = `${BASE_URL}/channels_count?period=${period}`;
 
-      // Append staff_id if provided
       if (staffId) {
         url += `&staff_id=${staffId}`;
       }
 
-      // Append type if provided
       if (type) {
         url += `&type=${type}`;
       }
@@ -201,23 +184,19 @@
       return $http
         .get(url)
         .then(res => {
-          // Return the 'data' property from the response if it's an array
           if (res.data && Array.isArray(res.data.data)) {
-            return res.data.data;  // Extract and return the actual array of data
+            return res.data.data;
           } else {
-            // If it's not in the expected format, return an empty array
             console.error('Invalid API response:', res.data);
             return [];
           }
         })
         .catch(error => {
           console.error('Error in API request:', error);
-          return [];  // Return an empty array on error to avoid breaking the controller
+          return [];
         });
     }
 
-
-    // ─── NEW: Get all reviews where reviewee_id = staffId ───
     function getReviewsForStaff(staffId) {
       return $http
         .get(`${BASE_URL}/reviews?reviewee_id=${staffId}`)

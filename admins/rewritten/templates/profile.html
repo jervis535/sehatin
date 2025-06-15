@@ -1,7 +1,6 @@
 <div ng-controller="ProfileController as vm" class="main-content">
   <h2 class="panel-title">My Profile</h2>
 
-  <!-- ─── Update Personal Info ─── -->
   <div class="card">
     <h3>Update Personal Info</h3>
     <form name="personalForm" ng-submit="vm.updatePersonalInfo()" novalidate>
@@ -24,7 +23,6 @@
     </form>
   </div>
 
-  <!-- ─── POI Section ─── -->
   <div class="card" ng-if="vm.isLevel2">
     <h3>My POI</h3>
     <form name="poiForm" ng-submit="vm.updatePoiInfo()" novalidate>
@@ -62,7 +60,6 @@
     </form>
   </div>
 
-  <!-- ─── Change Password ─── -->
   <div class="card">
     <h3>Change Password</h3>
     <form name="passwordForm" ng-submit="vm.updatePassword()" novalidate>
@@ -89,8 +86,7 @@
     </form>
   </div>
 
-  <!-- ─── Messages & Logout ─── -->
-<div style="margin-top: 2rem; text-align:">
+<div style="margin-top: 2rem;">
   <button type="button" ng-click="vm.logout()" class="logout-btn">Logout</button>
 </div>
 

@@ -24,14 +24,12 @@ router.post('/admins', async (req, res) => {
 
     const admin = result.rows[0];
 
-    // Generate JWT token
     const token = jwt.sign(
       { id: admin.id, email: admin.email, level: admin.level },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    // Return admin and token
     res.status(201).json({
       admin,
       token
@@ -118,7 +116,6 @@ router.post('/admins/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { id: admin.id, email: admin.email, level: admin.level },
       process.env.JWT_SECRET,
@@ -145,7 +142,6 @@ router.put('/admins/changepass/:id', async (req, res) => {
     }
 
     try {
-        //gets current admin credentials
         const adminResult = await pool.query('SELECT * from admins WHERE id = $1', [adminId]);
         const admin = adminResult.rows[0];
 
@@ -153,16 +149,13 @@ router.put('/admins/changepass/:id', async (req, res) => {
             return res.status(404).json({ error: 'admin not found' });
         }
 
-        //checks if password is correct
         const isOldPasswordCorrect = await bcrypt.compare(oldpass, admin.password);
         if (!isOldPasswordCorrect) {
             return res.status(400).json({ error: 'Old password is incorrect' });
         }
 
-        //hash new password
         const hashedPassword = await bcrypt.hash(newpass, 10);
 
-        //update the admin un database
         await pool.query('UPDATE admins SET password = $1 WHERE id = $2', [hashedPassword, adminId]);
 
         res.status(200).json({ message: 'Password successfully updated' });

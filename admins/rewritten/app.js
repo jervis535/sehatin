@@ -9,8 +9,6 @@
     .controller('VerifyController', VerifyController)
     .controller('ChartController', ChartController);
 
-  //───────────────────────────────────────────────────────────────────────────
-  // 1) ROUTE CONFIGURATION
   configureRoutes.$inject = ['$routeProvider', '$locationProvider'];
   function configureRoutes($routeProvider, $locationProvider) {
     $routeProvider
@@ -22,49 +20,38 @@
       .otherwise({
         redirectTo: '/verify'
       });
-    // Use hashbang routing (e.g. #!/verify)
     $locationProvider.hashPrefix('!');
   }
 
-  //───────────────────────────────────────────────────────────────────────────
-  // 2) ROOT-SCOPE SETUP (FOR NAVBAR ACTIVE LINK)
   setupRootScope.$inject = ['$rootScope', '$location'];
   function setupRootScope($rootScope, $location) {
-    // Utility to check if a route is active (for adding an "active" class)
     $rootScope.isActive = function (viewLocation) {
       return viewLocation === $location.path();
     };
   }
 
-  //───────────────────────────────────────────────────────────────────────────
-  // 3) API SERVICE: WRAPS ALL HTTP CALLS
   ApiService.$inject = ['$http'];
   function ApiService($http) {
     const BASE_URL = 'http://localhost:3000';
 
     return {
-      // POI endpoints
       getUnverifiedPois: getUnverifiedPois,
       verifyPoi: verifyPoi,
       deletePoi: deletePoi,
 
-      // DOCTOR endpoints
       getUnverifiedDoctors: getUnverifiedDoctors,
       verifyDoctor: verifyDoctor,
       deleteDoctor: deleteDoctor,
 
-      // CUSTOMER-SERVICE endpoints
       getUnverifiedCustomerServices: getUnverifiedCustomerServices,
       verifyCustomerService: verifyCustomerService,
       deleteCustomerService: deleteCustomerService,
 
-      // AUXILIARY fetches
       fetchUserInfo: fetchUserInfo,
       fetchPoiName: fetchPoiName,
       fetchEvidenceImage: fetchEvidenceImage
     };
 
-    // —— POIs ——
     function getUnverifiedPois() {
       return $http
         .get(`${BASE_URL}/pois?verified=false`)
@@ -81,7 +68,6 @@
         .then(res => res.data);
     }
 
-    // —— Doctors ——
     function getUnverifiedDoctors() {
       return $http
         .get(`${BASE_URL}/doctors?verified=false`)
@@ -98,7 +84,6 @@
         .then(res => res.data);
     }
 
-    // —— Customer Services ——
     function getUnverifiedCustomerServices() {
       return $http
         .get(`${BASE_URL}/customerservices?verified=false`)
@@ -115,7 +100,6 @@
         .then(res => res.data);
     }
 
-    // —— Auxiliary endpoints ——
     function fetchUserInfo(userId) {
       return $http
         .get(`${BASE_URL}/users/${userId}`)
@@ -130,18 +114,14 @@
       return $http
         .get(`${BASE_URL}/evidences/${userId}`)
         .then(res => {
-          // If backend returns { image: <base64> }, resolve with image string.
           return res.data.image || null;
         })
         .catch(err => {
-          // If 404 or no evidence, just return null (no need to break entire chain)
           return null;
         });
     }
   }
 
-  //───────────────────────────────────────────────────────────────────────────
-  // 4) VERIFY CONTROLLER
   VerifyController.$inject = ['ApiService', '$q'];
   function VerifyController(ApiService, $q) {
     const vm = this;
@@ -149,7 +129,6 @@
     vm.doctors = [];
     vm.customerServices = [];
 
-    // Functions exposed to view:
     vm.refreshAll = refreshAll;
     vm.verifyPoi = verifyPoi;
     vm.denyPoi = denyPoi;
@@ -158,25 +137,17 @@
     vm.verifyCustomerService = verifyCustomerService;
     vm.denyCustomerService = denyCustomerService;
 
-    // On controller init, load all data
     refreshAll();
 
     function refreshAll() {
-      // 1) Load POIs
       ApiService.getUnverifiedPois()
         .then(data => {
-          // filter out any items that might already be marked verified
           vm.pois = data.filter(item => !item.verified);
         })
         .catch(err => console.error('Error loading POIs:', err));
-
-      // 2) Load DOCTORS + augment with userInfo, poiName, evidenceImage
       ApiService.getUnverifiedDoctors()
         .then(doctors => {
-          // Only keep those with verified === false
           doctors = doctors.filter(d => !d.verified);
-
-          // For each doctor, fetch (userInfo, poiName, evidenceImage)
           return $q.all(
             doctors.map(item =>
               $q
@@ -205,7 +176,6 @@
         })
         .catch(err => console.error('Error loading doctors:', err));
 
-      // 3) Load CUSTOMER SERVICES + augment similarly
       ApiService.getUnverifiedCustomerServices()
         .then(services => {
           services = services.filter(s => !s.verified);
@@ -239,7 +209,6 @@
         .catch(err => console.error('Error loading customer services:', err));
     }
 
-    // —— POI verify/deny ——
     function verifyPoi(poiId) {
       ApiService.verifyPoi(poiId)
         .then(() => refreshAll())
@@ -251,7 +220,6 @@
         .catch(err => console.error('Error deleting POI:', err));
     }
 
-    // —— DOCTOR verify/deny ——
     function verifyDoctor(userId) {
       ApiService.verifyDoctor(userId)
         .then(() => refreshAll())
@@ -263,7 +231,6 @@
         .catch(err => console.error('Error deleting doctor:', err));
     }
 
-    // —— CUSTOMER SERVICE verify/deny ——
     function verifyCustomerService(userId) {
       ApiService.verifyCustomerService(userId)
         .then(() => refreshAll())
@@ -276,8 +243,6 @@
     }
   }
 
-  //───────────────────────────────────────────────────────────────────────────
-  // 5) CHART CONTROLLER
   ChartController.$inject = ['$document', '$timeout'];
   function ChartController($document, $timeout) {
     const vm = this;
@@ -285,9 +250,7 @@
     vm.labels = ['Consultation', 'Service'];
     vm.dataValues = [3, 3];
 
-    // Wait until the DOM has rendered the <canvas> (use $timeout)
     $timeout(() => {
-      // Grab the canvas by its ID directly via $document
       const canvas = $document[0].getElementById('dataChart');
       if (!canvas) {
         console.error('ChartController: <canvas id="dataChart"> not found!');

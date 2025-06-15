@@ -48,7 +48,7 @@ class _UserSearchScreenState extends State<UserSearchScreen> {
         elevation: 0,
         foregroundColor: Colors.white,
         titleTextStyle: const TextStyle(
-          color: Color.fromARGB(255, 255, 255, 255), // putih
+          color: Color.fromARGB(255, 255, 255, 255),
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),

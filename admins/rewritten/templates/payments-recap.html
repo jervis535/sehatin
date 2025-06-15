@@ -15,7 +15,6 @@
   <div ng-if="vm.loading">Loading…</div>
   <div class="error" ng-if="vm.error">{{ vm.error }}</div>
 
-  <!-- Payments Chart -->
   <div ng-if="!vm.loading && !vm.error" class="chart-container">
     <canvas id="paymentsChart" width="400" height="200"></canvas>
   </div>

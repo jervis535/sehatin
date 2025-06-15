@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '/services/customer_service_service.dart';
-import '/services/channel_service.dart'; // Import the channel service
+import '/services/channel_service.dart';
 import '../../models/user_model.dart';
 import '../../services/doctor_service.dart';
 import '../home/home_buttons.dart';
@@ -48,20 +48,16 @@ class _HomePageState extends State<HomeScreen> {
     setState(() => loading = false);
   }
 
-  // Fetch daily chat count based on the role using the existing function in channel_service.dart
   Future<void> _fetchDailyChatCount() async {
     final roleLower = widget.user.role.trim().toLowerCase();
-
-    // Only fetch count for customer service or doctor roles
     if (roleLower == 'customer service' || roleLower == 'doctor') {
       try {
         final count = await ChannelService.getStaffChannelCounts(
           staffId: widget.user.id,
-          period: 'day', // Fetch daily count
+          period: 'day',
         );
 
         setState(() {
-          // Check if there's data and map the correct key
           dailyChatCount = count.isNotEmpty && count[0].containsKey('chat_count')
               ? count[0]['chat_count'] ?? 0
               : 0;
@@ -70,7 +66,6 @@ class _HomePageState extends State<HomeScreen> {
         setState(() {
           dailyChatCount = "0";
         });
-        print('Error fetching daily chat count: $e');
       }
     }
   }
@@ -139,8 +134,6 @@ class _HomePageState extends State<HomeScreen> {
                     ],
                   ),
                   const SizedBox(height: 50),
-
-                  // Display daily chat count if applicable
                   if (dailyChatCount != null)
                     Padding(
                       padding: const EdgeInsets.all(16),
@@ -154,7 +147,6 @@ class _HomePageState extends State<HomeScreen> {
                       ),
                     ),
 
-                  // Tombol role-based + profil
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Wrap(

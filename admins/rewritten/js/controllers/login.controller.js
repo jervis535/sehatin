@@ -16,17 +16,13 @@
       vm.errorMessage = '';
       AuthService.login(vm.email, vm.password)
         .then(response => {
-          // We only care about level; ignore poi_id here
-          const level = AuthService.getLevel(); // string "1" or "2"
+          const level = AuthService.getLevel();
 
           if (level === '1') {
-            // Level 1 admins always go to the POI‐verification page
             $location.path('/verify');
           } else if (level === '2') {
-            // Level 2 admins always go to the Chart page
             $location.path('/verify');
           } else {
-            // Should never happen if backend always returns a valid level
             vm.errorMessage = 'Invalid admin level returned. Please try again.';
             AuthService.logout();
           }

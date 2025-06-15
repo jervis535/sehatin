@@ -16,7 +16,7 @@ const a =
   Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
 const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-return R * c; // Distance in kilometers
+return R * c;
 };
 
 // Create a new POI (Place of Interest)
@@ -43,7 +43,6 @@ let query = 'SELECT * FROM pois';
 const conditions = [];
 const values = [];
 
-// Handle verified filter
 if (verified === 'false') {
   conditions.push('verified = false');
 }

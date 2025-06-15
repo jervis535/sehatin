@@ -25,7 +25,7 @@ const app = express();
 const port = 3000;
 
 app.use(fileUpload({
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+  limits: { fileSize: 10 * 1024 * 1024 },
 }));
 app.use(cors());
 
@@ -45,10 +45,8 @@ app.use(adminRoutes);
 app.use(reviewRoute);
 app.use(paymentRoute);
 
-// Create HTTP server and attach Express app
 const server = http.createServer(app);
 
-// Setup WebSocket server on the same HTTP server
 setupWebSocket(server);
 
 server.listen(port, () => {

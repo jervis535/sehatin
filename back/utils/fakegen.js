@@ -118,9 +118,8 @@ async function generateData() {
       [poi_id, telno, email, level, hashedPassword]
     );
 
-    console.log('✅ Fake data inserted successfully!');
   } catch (err) {
-    console.error('❌ Error inserting fake data:', err);
+    console.error('Error inserting fake data:', err);
   } finally {
     await pool.end();
   }

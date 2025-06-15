@@ -9,26 +9,22 @@
   function DailyChatsController(ApiService, $q, $timeout) {
     const vm = this;
 
-    // Initialize counts
     vm.historicalData = [];
     vm.chartData = [];
     vm.chartLabels = [];
 
-    // Dropdown selections
-    vm.selectedType = 'consultation'; // Default to consultation
-    vm.selectedPeriod = 'day'; // Default to daily
-    vm.selectedDays = 7; // Default to showing last 7 days/weeks/months
+    vm.selectedType = 'consultation';
+    vm.selectedPeriod = 'day';
+    vm.selectedDays = 7;
 
     vm.loading = true;
     vm.errorMessage = '';
 
-    // On load
     init();
 
     function init() {
       vm.loading = true;
       
-      // Get aggregated counts by omitting the staffId parameter
       ApiService.getChannelCount('', vm.selectedPeriod, vm.selectedType)
         .then(results => {
           processHistoricalData(results);
@@ -43,7 +39,6 @@
     }
 
     function processHistoricalData(results) {
-      // Convert to array and sort by date
       vm.historicalData = results
         .map(item => ({
           period: item.period,
@@ -51,23 +46,18 @@
         }))
         .sort((a, b) => new Date(a.period) - new Date(b.period));
 
-      // If we have more data than selected days, take the most recent ones
       if (vm.historicalData.length > vm.selectedDays) {
         vm.historicalData = vm.historicalData.slice(-vm.selectedDays);
       }
     }
 
     function updateChartData() {
-      // Clear existing chart
       if (vm.chart) {
         vm.chart.destroy();
       }
-
-      // Prepare chart data
       vm.chartLabels = vm.historicalData.map(item => formatPeriodLabel(item.period));
       vm.chartData = vm.historicalData.map(item => item.count);
 
-      // Render chart
       $timeout(() => renderChart(), 0);
     }
 
@@ -138,10 +128,9 @@
       });
     }
 
-    // Watch for changes in selections
     vm.updateChart = function () {
       vm.loading = true;
-      init(); // Re-fetch data with new parameters
+      init();
     };
   }
 })();

@@ -9,7 +9,6 @@
   function RegisterController(ApiService, $location) {
     const vm = this;
 
-    // A single form object to hold all fields
     vm.formData = {
       name: '',
       category: '',
@@ -29,7 +28,6 @@
       vm.errorMessage = '';
       vm.successMessage = '';
 
-      // 1) Create the POI
       const poiPayload = {
         name:       vm.formData.name,
         category:   vm.formData.category,
@@ -40,10 +38,8 @@
 
       ApiService.createPoi(poiPayload)
         .then(poiResponse => {
-          // poiResponse is the POI object, including { id, name, ... }
           const newPoiId = poiResponse.id;
 
-          // 2) Create the Admin using newPoiId
           const adminPayload = {
             poi_id:   newPoiId,
             telno:    vm.formData.telno,
@@ -55,14 +51,10 @@
           return ApiService.createAdmin(adminPayload);
         })
         .then(adminResponse => {
-          // adminResponse contains { admin: { … }, token: '…' }
           vm.successMessage = 'Registration successful! You can now log in.';
-          // Optionally: redirect to login page after a short delay
-          // $location.path('/login');
         })
         .catch(err => {
           console.error('Error during registration:', err);
-          // If the POI create succeeded but admin create failed, you may want to delete the POI, but for simplicity:
           if (err.data && err.data.error) {
             vm.errorMessage = err.data.error;
           } else {

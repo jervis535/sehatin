@@ -16,7 +16,6 @@ const hashPassword = async (password) => {
     return await bcrypt.hash(password, salt);
 };
 
-//user endpoints -----------------------------------------
 //gets data from all users (except password)
 router.get('/users', async (req, res) => {
     try {
@@ -90,7 +89,6 @@ router.post('/users', async (req, res) => {
 
         await client.query('COMMIT');
 
-        // Generate JWT token
         const token = jwt.sign(
             { id: user.id, username: user.username, email: user.email },
             SECRET_KEY,
@@ -231,7 +229,6 @@ router.put('/users/changepass/:id', async (req, res) => {
     }
 
     try {
-        //gets current user credentials
         const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
         const user = userResult.rows[0];
 
@@ -239,16 +236,13 @@ router.put('/users/changepass/:id', async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        //checks if password is correct
         const isOldPasswordCorrect = await bcrypt.compare(oldpass, user.password);
         if (!isOldPasswordCorrect) {
             return res.status(400).json({ error: 'Old password is incorrect' });
         }
 
-        //hash new password
         const hashedPassword = await bcrypt.hash(newpass, 10);
 
-        //update the user un database
         await pool.query('UPDATE users SET password = $1 WHERE id = $2', [hashedPassword, userId]);
 
         res.status(200).json({ message: 'Password successfully updated' });
@@ -289,13 +283,11 @@ router.post('/users/login', async (req, res) => {
       }
       const user = result.rows[0];
   
-      //comparing password
       const match = await bcrypt.compare(password, user.password);
       if (!match) {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
       
-      //generate token
       const token = jwt.sign({ id: user.id, username: user.username, email: user.email  }, SECRET_KEY, { expiresIn: '1h' });
       res.status(200).json({
         token,

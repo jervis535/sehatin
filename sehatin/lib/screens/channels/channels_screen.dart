@@ -35,10 +35,8 @@ class _ChannelsScreenState extends State<ChannelsScreen>
 
     setState(() {
       if (_tabController.index == 0 || !_canViewArchived) {
-        // Active channels
         _channelsFuture = ChannelService.getUserChannels(widget.user.id);
       } else {
-        // Archived channels
         _channelsFuture = ChannelService.getArchivedUserChannels(
           widget.user.id,
         );

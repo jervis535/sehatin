@@ -27,7 +27,6 @@ Widget build(BuildContext context) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         return ListTile(title: Text('Loading...'));
       } else if (snapshot.hasError) {
-        print('Fetch user error: ${snapshot.error}');
         return ListTile(title: Text('Error loading user'));
       } else if (!snapshot.hasData || snapshot.data == null) {
         return ListTile(title: Text('User not found'));

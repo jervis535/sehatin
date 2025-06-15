@@ -44,15 +44,12 @@
         .catch(() => vm.errorMessage = 'Failed to load profile.');
     }
 
-    // ─── PERSONAL INFO ─────────────────────────────────────────────────
     function updatePersonalInfo() {
       vm.errorMessage   = '';
       vm.successMessage = '';
 
-      // 1) Re-authenticate
       AuthService.login(vm.admin.email, vm.currentPasswordInfo)
         .then(() => {
-          // 2) Update admin info
           const payload = {
             poi_id: vm.isLevel2 ? vm.poi.id : null,
             telno:  vm.admin.telno,
@@ -74,12 +71,10 @@
         });
     }
 
-    // ─── POI INFO (LEVEL 2) ────────────────────────────────────────────
     function updatePoiInfo() {
       vm.errorMessage   = '';
       vm.successMessage = '';
 
-     // require the new, separate POI password
      if (!vm.currentPasswordPoi) {
        vm.errorMessage = 'Enter current password to update POI.';
        return;
@@ -109,22 +104,18 @@
         });
     }
 
-    // ─── PASSWORD CHANGE ───────────────────────────────────────────────
     function updatePassword() {
       vm.errorMessage   = '';
       vm.successMessage = '';
 
-      // 1) verify new/confirm match client‑side
       if (vm.newPassword !== vm.confirmPassword) {
         vm.errorMessage = 'New passwords do not match.';
         return;
       }
 
-      // 2) call the new changepass endpoint
       ApiService.changeAdminPassword(vm.admin.id, vm.currentPasswordPwd, vm.newPassword)
         .then(() => {
           vm.successMessage = 'Password changed successfully.';
-          // clear fields
           vm.currentPasswordPwd = vm.newPassword = vm.confirmPassword = '';
         })
         .catch(err => {

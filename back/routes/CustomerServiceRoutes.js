@@ -11,7 +11,6 @@ router.get('/customerservices', async (req, res) => {
     const values = [];
     const conditions = [];
 
-    // Verified filter
     if (verified === 'false') {
         conditions.push('verified = false');
     } else {

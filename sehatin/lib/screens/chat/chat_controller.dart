@@ -45,7 +45,7 @@ class ChatController {
       if (res.statusCode == 200) {
         final chJson = json.decode(res.body);
         isArchived = chJson['archived'] ?? false;
-        update(() {}); // Trigger UI update
+        update(() {});
       }
     } catch (e) {
       debugPrint('Error loading channel data: $e');

@@ -12,12 +12,9 @@
     vm.doctors = [];
     vm.customerServices = [];
 
-    // Admin level (1 or 2)
     vm.adminLevel = parseInt(AuthService.getLevel(), 10);
-        // Read the admin’s POI ID (string) and convert to number
-    vm.adminPoiId = parseInt(AuthService.getPoiId(), 10) || -1;  // NaN → -1 for safety
+    vm.adminPoiId = parseInt(AuthService.getPoiId(), 10) || -1;
 
-    // Expose methods
     vm.refreshAll              = refreshAll;
     vm.verifyPoi               = verifyPoi;
     vm.denyPoi                 = denyPoi;
@@ -26,24 +23,17 @@
     vm.verifyCustomerService   = verifyCustomerService;
     vm.denyCustomerService     = denyCustomerService;
 
-    // On init, load data
     refreshAll();
 
     function refreshAll() {
-      // ─── POIs + attach admin contact ───
-      // 1) Get unverified POIs
-      // 2) Get all admins
-      // 3) For each POI, find admin with admin.poi_id === poi.id
 
       $q.all({
         pois: ApiService.getUnverifiedPois(),
         admins: ApiService.getAllAdmins()
       })
       .then(({ pois, admins }) => {
-        // Filter only unverified POIs
         pois = pois.filter(poi => !poi.verified);
 
-        // Map each POI to include adminTel & adminEmail
         const augmentedPois = pois.map(poi => {
           const admin = admins.find(a => a.poi_id === poi.id);
           return {
@@ -62,7 +52,6 @@
       })
       .catch(err => console.error('Error loading POIs or Admins:', err));
 
-      // ─── DOCTORS (unchanged) ───
       ApiService.getUnverifiedDoctors()
         .then(doctors => {
           doctors = doctors.filter(d => !d.verified && d.poi_id === vm.adminPoiId);
@@ -90,7 +79,6 @@
         })
         .catch(err => console.error('Error loading doctors:', err));
 
-      // ─── CUSTOMER SERVICES (unchanged) ───
       ApiService.getUnverifiedCustomerServices()
         .then(services => {
           services = services.filter(s => !s.verified && s.poi_id === vm.adminPoiId);;
@@ -119,7 +107,6 @@
         .catch(err => console.error('Error loading customer services:', err));
     }
 
-    // ─── VERIFY/DELETE handlers ───
     function verifyPoi(poiId) {
       ApiService.verifyPoi(poiId)
         .then(() => refreshAll())

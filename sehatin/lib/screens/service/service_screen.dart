@@ -72,8 +72,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
   Future<void> _pickPoiAndConnect() async {
     try {
       List<double> pos = await _getCurrentLocation();
-      print(pos[0]);
-      print(pos[1]);
       final poi = await Navigator.push<PoiModel?>(
         context,
         MaterialPageRoute(

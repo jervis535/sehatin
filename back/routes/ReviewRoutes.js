@@ -11,21 +11,19 @@ router.get('/reviews', async (req, res) => {
     const conditions = [];
     const values = [];
 
-    // Check if reviewer_id is a valid integer and construct query condition
     if (reviewer_id) {
         if (isNaN(reviewer_id)) {
             return res.status(400).json({ error: 'Invalid reviewer_id, must be an integer' });
         }
-        values.push(parseInt(reviewer_id));  // Parse as integer
+        values.push(parseInt(reviewer_id));
         conditions.push(`reviewer_id = $${values.length}`);
     }
 
-    // Check if reviewee_id is a valid integer and construct query condition
     if (reviewee_id) {
         if (isNaN(reviewee_id)) {
             return res.status(400).json({ error: 'Invalid reviewee_id, must be an integer' });
         }
-        values.push(parseInt(reviewee_id));  // Parse as integer
+        values.push(parseInt(reviewee_id));
         conditions.push(`reviewee_id = $${values.length}`);
     }
 
