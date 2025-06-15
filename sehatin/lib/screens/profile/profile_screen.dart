@@ -304,17 +304,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           CustomBottomNav(user: widget.user, token: widget.token),
 
-          // Avatar posisi di atas konten, tengah layar horizontal
-          Positioned(
-            top: 60,
-            left: 0,
-            right: 0,
-            child: CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.white,
-              child: Icon(Icons.person, size: 60, color: Colors.grey.shade400),
-            ),
-          ),
 
           // Gantikan logo dengan tombol back di kiri atas
           Positioned(

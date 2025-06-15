@@ -27,16 +27,6 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Positioned(
-                  top: 120,
-                  left: 0,
-                  right: 0,
-                  child: CircleAvatar(
-                    radius: 80,
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.person, size: 80, color: Colors.grey),
-                  ),
-                ),
               ],
             ),
             const SizedBox(height: 90),

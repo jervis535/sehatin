@@ -36,34 +36,38 @@
         const filteredDoctors = doctors.filter(d => parseInt(d.poi_id, 10) === adminPoiId);
         const filteredServices = services.filter(s => parseInt(s.poi_id, 10) === adminPoiId);
 
-        // 3) Build placeholder array
-        const staffPlaceholders = filteredDoctors.map(d => ({
-          staffId: d.user_id,
-          name:    d.name || d.username || `Dr. ${d.user_id}`,
-          role:    'doctor'
-        }))
+        // 3) Build placeholder array with real name fetching for each staff
+        const staffPlaceholders = filteredDoctors.map(d => {
+          // Fetch real name for doctor
+          return ApiService.fetchUserInfo(d.user_id).then(user => ({
+            staffId: d.user_id,
+            name: user.username || `Dr. ${d.user_id}`,
+            role: 'doctor'
+          }));
+        })
         .concat(
-          filteredServices.map(s => ({
-            staffId: s.user_id,
-            name:    s.name || s.username || `CS ${s.user_id}`,
-            role:    'customer_service'
-          }))
+          filteredServices.map(s => {
+            // Fetch real name for customer service staff
+            return ApiService.fetchUserInfo(s.user_id).then(user => ({
+              staffId: s.user_id,
+              name: user.username || `CS ${s.user_id}`,
+              role: 'customer_service'
+            }));
+          })
         );
 
-        // 4) For each staff, fetch reviews
-        return $q.all(staffPlaceholders.map(staff =>
-  ApiService.getReviewsForStaff(staff.staffId)
-    .then(reviews => {
-      console.log(`Reviews for staff ${staff.staffId}:`, reviews); // <-- Debug print here
-      return {
-        staffId: staff.staffId,
-        name:    staff.name,
-        role:    staff.role,
-        reviews: reviews // array of review objects
-      };
-    })
-));
-
+        // 4) After fetching the real names, fetch reviews for each staff member
+        return $q.all(staffPlaceholders).then(staffEntries => {
+          return $q.all(staffEntries.map(staff => {
+            return ApiService.getReviewsForStaff(staff.staffId)
+              .then(reviews => ({
+                staffId: staff.staffId,
+                name: staff.name,
+                role: staff.role,
+                reviews: reviews // array of review objects
+              }));
+          }));
+        });
       })
       .then(results => {
         vm.staffReviews = results;

@@ -101,17 +101,6 @@ class _LoginFormState extends State<LoginForm> {
 
         const SizedBox(height: 8),
 
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed: () {},
-            child: const Text(
-              'Forget Password?',
-              style: TextStyle(fontSize: 12, color: Colors.black54),
-            ),
-          ),
-        ),
-
         if (_error.isNotEmpty) ...[
           const SizedBox(height: 8),
           Text(

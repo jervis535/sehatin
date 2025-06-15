@@ -138,7 +138,7 @@
             const lvl = parseInt(AuthService.getLevel(), 10);
             if (lvl === 2) {
                 event.preventDefault();
-                $location.path('/chart');
+                $location.path('/verify');
             } else if (lvl === 1) {
                 event.preventDefault();
                 $location.path('/verify');

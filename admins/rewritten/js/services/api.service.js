@@ -225,7 +225,7 @@
     }
     function getAllChannels() {
       return $http
-        .get(`${BASE_URL}/channels?archived=false`)
+        .get(`${BASE_URL}/channels?all=true`)
         .then(r => r.data);
     }
 

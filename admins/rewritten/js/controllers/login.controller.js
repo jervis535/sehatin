@@ -24,7 +24,7 @@
             $location.path('/verify');
           } else if (level === '2') {
             // Level 2 admins always go to the Chart page
-            $location.path('/chart');
+            $location.path('/verify');
           } else {
             // Should never happen if backend always returns a valid level
             vm.errorMessage = 'Invalid admin level returned. Please try again.';

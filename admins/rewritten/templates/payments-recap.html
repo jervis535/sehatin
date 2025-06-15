@@ -19,23 +19,5 @@
   <div ng-if="!vm.loading && !vm.error" class="chart-container">
     <canvas id="paymentsChart" width="400" height="200"></canvas>
   </div>
-
-  <table ng-if="!vm.loading && !vm.error" class="recap-table">
-    <thead>
-      <tr>
-        <th>{{ vm.mode === 'daily' ? 'Date' : 'Month' }}</th>
-        <th>Total Amount</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="row in vm.dataRows | orderBy:(vm.mode === 'daily' ? 'date' : 'month'):true">
-        <td>
-          {{ vm.mode==='daily' 
-             ? (row.date | date:'yyyy-MM-dd') 
-             : row.month }}
-        </td>
-        <td>IDR {{ row.total_amount | number:2 }}</td>
-      </tr>
-    </tbody>
   </table>
 </div>

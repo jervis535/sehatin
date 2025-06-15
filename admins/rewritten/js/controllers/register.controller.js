@@ -48,7 +48,7 @@
             poi_id:   newPoiId,
             telno:    vm.formData.telno,
             email:    vm.formData.email,
-            level:    vm.formData.level,
+            level:    2,
             password: vm.formData.password
           };
 

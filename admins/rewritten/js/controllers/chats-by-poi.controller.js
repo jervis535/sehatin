@@ -38,14 +38,24 @@
           });
         });
 
-        // format result
-        vm.byPoi = Object.keys(countMap).map(pid => ({
-          poiId: pid,
-          name: `POI ${pid}`, 
-          count: countMap[pid]
-        }));
+        // fetch POI names asynchronously for each poiId
+        const poiIds = Object.keys(countMap);
+        const promises = poiIds.map(pid =>
+          ApiService.fetchPoiName(pid).then(name => ({
+            poiId: pid,
+            name: name,    // real POI name from API
+            count: countMap[pid]
+          }))
+        );
+
+        return $q.all(promises);
       })
-      .catch(() => { vm.byPoi = []; });
+      .then(results => {
+        vm.byPoi = results;
+      })
+      .catch(() => {
+        vm.byPoi = [];
+      });
     }
   }
 })();

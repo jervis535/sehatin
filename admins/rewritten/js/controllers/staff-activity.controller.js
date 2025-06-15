@@ -38,32 +38,40 @@
           const filteredServices = services.filter(s => parseInt(s.poi_id, 10) === adminPoiId);
 
           // Build an array of “staffEntry” placeholders
-          const staffPlaceholders = filteredDoctors.map(d => ({
-            staffId:      d.user_id,        // assuming doctor table has user_id (or id)
-            name:         d.name || d.username || `Dr. ${d.user_id}`, // whatever your backend returns
-            role:         'doctor'
-          }))
+          const staffPlaceholders = filteredDoctors.map(d => {
+            // Fetch real name for doctor from user info
+            return ApiService.fetchUserInfo(d.user_id).then(user => ({
+              staffId: d.user_id,
+              name: user.username || `Dr. ${d.user_id}`,  // Use real name from the user table
+              role: 'doctor'
+            }));
+          })
           .concat(
-            filteredServices.map(s => ({
-              staffId:    s.user_id,       // or s.id, whichever is unique identifier
-              name:       s.name || s.username || `CS ${s.user_id}`,
-              role:       'customer_service'
-            }))
+            filteredServices.map(s => {
+              // Fetch real name for customer service staff from user info
+              return ApiService.fetchUserInfo(s.user_id).then(user => ({
+                staffId: s.user_id,
+                name: user.username || `CS ${s.user_id}`,  // Use real name from the user table
+                role: 'customer_service'
+              }));
+            })
           );
 
           // 3) For each entry, fetch day+month counts in parallel
-          return $q.all(staffPlaceholders.map(staff => {
-            return $q.all({
-              daily:   ApiService.getChannelCount(staff.staffId, 'day'),
-              monthly: ApiService.getChannelCount(staff.staffId, 'month')
-            }).then(({ daily, monthly }) => ({
-              staffId:       staff.staffId,
-              name:          staff.name,
-              role:          staff.role,
-              dailyCounts:   daily || [],
-              monthlyCounts: monthly || []
+          return $q.all(staffPlaceholders).then(staffEntries => {
+            return $q.all(staffEntries.map(staff => {
+              return $q.all({
+                daily: ApiService.getChannelCount(staff.staffId, 'day'),
+                monthly: ApiService.getChannelCount(staff.staffId, 'month')
+              }).then(({ daily, monthly }) => ({
+                staffId: staff.staffId,
+                name: staff.name,
+                role: staff.role,
+                dailyCounts: daily || [],
+                monthlyCounts: monthly || []
+              }));
             }));
-          }));
+          });
         })
         .then(results => {
           vm.staffActivities = results;

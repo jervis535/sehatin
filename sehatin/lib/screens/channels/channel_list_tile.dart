@@ -37,7 +37,7 @@ Widget build(BuildContext context) {
       final otherUser = snapshot.data!;
       return ListTile(
       title: Text('Chat with ${otherUser.username}'),
-      subtitle: Text('Channel ID: ${channel.id}'),
+      subtitle: Text('Type: ${channel.type}'),
       onTap: () {
         Navigator.push(
           context,

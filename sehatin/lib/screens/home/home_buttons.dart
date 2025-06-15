@@ -59,7 +59,17 @@ List<Widget> buildRoleBasedButtons(BuildContext context, UserModel user, String 
     return [
       RoleBasedButton(
         label: 'Consultation',
-        iconWidget: Image.asset('assets/doctor.png', width: 30, height: 30),
+        iconWidget: ColorFiltered(
+          colorFilter: const ColorFilter.mode(
+            Colors.grey,
+            BlendMode.srcIn,
+          ),
+          child: Image.asset(
+            'assets/doctor.png',
+            width: 40,
+            height: 40,
+          ),
+        ),
         onTap: () {
           Navigator.push(
             context,
@@ -103,7 +113,7 @@ List<Widget> buildRoleBasedButtons(BuildContext context, UserModel user, String 
       ),
       RoleBasedButton(
         label: 'Reviews',
-        iconWidget: const Icon(Icons.history, size: 30, color: Colors.grey),
+        iconWidget: const Icon(Icons.star, size: 30, color: Colors.grey),
         onTap: () {
           Navigator.push(
             context,
@@ -113,7 +123,7 @@ List<Widget> buildRoleBasedButtons(BuildContext context, UserModel user, String 
       ),
       RoleBasedButton(
         label: 'payment',
-        iconWidget: Image.asset('assets/doctor.png', width: 30, height: 30),
+        iconWidget: const Icon(Icons.shopping_cart, size: 30, color: Colors.grey),
         onTap: () {
           Navigator.push(
             context,

@@ -19,13 +19,8 @@
         controller: 'VerifyController',
         controllerAs: 'vm'
       })
-      .when('/chart', {
-        templateUrl: 'templates/chart.html',
-        controller: 'ChartController',
-        controllerAs: 'vm'
-      })
       .otherwise({
-        redirectTo: '/chart'
+        redirectTo: '/verify'
       });
     // Use hashbang routing (e.g. #!/verify)
     $locationProvider.hashPrefix('!');
