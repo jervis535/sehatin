@@ -67,6 +67,7 @@ flutter:
   uses-material-design: true
 
   assets:
+  #some of the following was imported but not used.
     - .env
     - assets/wave.png
     - assets/logo.png

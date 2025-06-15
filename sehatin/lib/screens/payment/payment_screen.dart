@@ -13,6 +13,7 @@ class PaymentScreen extends StatefulWidget {
     required this.price,
     required this.user,
   }) : super(key: key);
+
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
 }
@@ -37,28 +38,31 @@ class _PaymentScreenState extends State<PaymentScreen> {
   void _submitPayment() async {
     if (_formKey.currentState!.validate()) {
       final countToAdd = _getConsultationCount();
-      final amount=(_getConsultationAmount()).toDouble();
+      final amount = (_getConsultationAmount()).toDouble();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Processing Payment...')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Processing Payment...')));
 
       try {
         await UserService.updateConsultationCount(
           userId: widget.user.id,
           add: countToAdd,
-          amount: amount
+          amount: amount,
         );
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Consultations added: $countToAdd')),
         );
 
-        // Optionally navigate back or show confirmation
         Navigator.pop(context);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Payment successful, but failed to update consultations: $e')),
+          SnackBar(
+            content: Text(
+              'Payment successful, but failed to update consultations: $e',
+            ),
+          ),
         );
       }
     }
@@ -95,6 +99,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.bundleName} - Payment'),
+        backgroundColor: const Color.fromARGB(255, 52, 43, 182),
+        foregroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -102,45 +108,58 @@ class _PaymentScreenState extends State<PaymentScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              // Display price here
-              Text(
-                'Total: ${widget.price}',
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      'Total: ${widget.price}',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 52, 43, 182),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 24),
-
-              TextFormField(
+              const SizedBox(height: 32),
+              _buildTextField(
                 controller: _cardNumberController,
+                label: 'Card Number',
+                hint: '1234 5678 9012 3456',
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Card Number',
-                  hintText: '1234 5678 9012 3456',
-                  border: OutlineInputBorder(),
-                ),
-                maxLength: 19,
+                maxLength: 16,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter card number';
                   }
                   final cleaned = value.replaceAll(' ', '');
-                  if (cleaned.length != 16 || !RegExp(r'^[0-9]+$').hasMatch(cleaned)) {
+                  if (cleaned.length != 16 ||
+                      !RegExp(r'^[0-9]+$').hasMatch(cleaned)) {
                     return 'Enter a valid 16-digit card number';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              _buildTextField(
                 controller: _cardHolderController,
-                decoration: const InputDecoration(
-                  labelText: 'Card Holder Name',
-                  hintText: 'John Doe',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Card Holder Name',
+                hint: 'John Doe',
+                keyboardType: TextInputType.text,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Please enter card holder name';
@@ -152,20 +171,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: TextFormField(
+                    child: _buildTextField(
                       controller: _expiryDateController,
+                      label: 'Expiry Date',
+                      hint: 'MM/YY',
                       keyboardType: TextInputType.datetime,
-                      decoration: const InputDecoration(
-                        labelText: 'Expiry Date',
-                        hintText: 'MM/YY',
-                        border: OutlineInputBorder(),
-                      ),
                       maxLength: 5,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Enter expiry date';
                         }
-                        if (!RegExp(r'^(0[1-9]|1[0-2])\/?([0-9]{2})$').hasMatch(value)) {
+                        if (!RegExp(
+                          r'^(0[1-9]|1[0-2])\/?([0-9]{2})$',
+                        ).hasMatch(value)) {
                           return 'Enter valid MM/YY';
                         }
                         return null;
@@ -174,14 +192,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: TextFormField(
+                    child: _buildTextField(
                       controller: _securityCodeController,
+                      label: 'Security Code',
+                      hint: 'CVV',
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Security Code',
-                        hintText: 'CVV',
-                        border: OutlineInputBorder(),
-                      ),
                       maxLength: 4,
                       obscureText: true,
                       validator: (value) {
@@ -197,9 +212,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: _submitPayment,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromARGB(255, 52, 43, 182),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  elevation: 5,
+                  foregroundColor: Colors.white,
+                ),
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16),
                   child: Text('Pay', style: TextStyle(fontSize: 18)),
@@ -208,6 +232,49 @@ class _PaymentScreenState extends State<PaymentScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    TextInputType? keyboardType,
+    int? maxLength,
+    bool obscureText = false,
+    String? Function(String?)? validator,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        maxLength: maxLength,
+        obscureText: obscureText,
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        validator: validator,
       ),
     );
   }

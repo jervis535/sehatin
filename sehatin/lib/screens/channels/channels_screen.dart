@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../models/channel_model.dart';
 import '../../models/user_model.dart';
 import '../../services/channel_service.dart';
-import '../../services/user_service.dart';
 import 'channel_list_tile.dart';
 
 class ChannelsScreen extends StatefulWidget {
@@ -23,25 +22,29 @@ class _ChannelsScreenState extends State<ChannelsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: _canViewArchived ? 2 : 1, vsync: this);
+    _tabController = TabController(
+      length: _canViewArchived ? 2 : 1,
+      vsync: this,
+    );
     _tabController.addListener(_onTabChanged);
     _channelsFuture = ChannelService.getUserChannels(widget.user.id);
   }
 
   void _onTabChanged() {
-  if (_tabController.indexIsChanging) return;
+    if (_tabController.indexIsChanging) return;
 
-  setState(() {
-    if (_tabController.index == 0 || !_canViewArchived) {
-      // Active channels
-      _channelsFuture = ChannelService.getUserChannels(widget.user.id);
-    } else {
-      // Archived channels
-      _channelsFuture = ChannelService.getArchivedUserChannels(widget.user.id);
-    }
-  });
-}
-
+    setState(() {
+      if (_tabController.index == 0 || !_canViewArchived) {
+        // Active channels
+        _channelsFuture = ChannelService.getUserChannels(widget.user.id);
+      } else {
+        // Archived channels
+        _channelsFuture = ChannelService.getArchivedUserChannels(
+          widget.user.id,
+        );
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -59,10 +62,7 @@ class _ChannelsScreenState extends State<ChannelsScreen>
         leading: BackButton(color: Colors.white),
         title: const Text(
           'Channel Saya',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         bottom: TabBar(
@@ -72,6 +72,8 @@ class _ChannelsScreenState extends State<ChannelsScreen>
             if (_canViewArchived) const Tab(text: 'Archived channels'),
           ],
           indicatorColor: Colors.white,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
         ),
       ),
       body: FutureBuilder<List<ChannelModel>>(
