@@ -30,7 +30,6 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
   }
 
   Future<void> _prepare() async {
-    // First lock: no consultations left
     if ((widget.user.consultationCount ?? 0) <= 0) {
       setState(() {
         _locked = true;
@@ -40,7 +39,6 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
       return;
     }
 
-    // Second lock: already has an active consultation
     final existing = await ChannelService.getUserChannels(
       widget.user.id,
       type: 'consultation',
@@ -48,7 +46,8 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
     if (existing.isNotEmpty) {
       setState(() {
         _locked = true;
-        _lockReason = 'You already have an active consultation.\nPlease finish that first.';
+        _lockReason =
+            'You already have an active consultation.\nPlease finish that first.';
         _loading = false;
       });
       return;
@@ -57,7 +56,8 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
     try {
       final doctors = await DoctorService.getAllDoctors();
       setState(() {
-        _specializations = doctors.map((d) => d.specialization).toSet().toList();
+        _specializations =
+            doctors.map((d) => d.specialization).toSet().toList();
       });
     } catch (e) {
       _error = 'Failed to load specializations';
@@ -97,7 +97,7 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
         widget.user.id,
         chosenDoctorId,
       );
-      UserService.updateConsultationCount(userId: widget.user.id ,subtract: 1);
+      UserService.updateConsultationCount(userId: widget.user.id, subtract: 1);
 
       if (channelId != null) {
         Navigator.pushReplacement(
@@ -119,7 +119,10 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: const Color(0xFFF7EAEA),
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
 
     if (_locked) {
@@ -127,8 +130,10 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
         appBar: AppBar(
           title: const Text('Consultation'),
           backgroundColor: const Color.fromARGB(255, 52, 43, 182),
-          foregroundColor: Colors.white,
-          iconTheme: const IconThemeData(color: Colors.white),
+          foregroundColor: const Color.fromARGB(255, 90, 65, 65),
+          iconTheme: const IconThemeData(
+            color: Color.fromARGB(255, 92, 33, 33),
+          ),
         ),
         body: Center(
           child: Padding(
@@ -162,7 +167,8 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
               specializations: _specializations,
               selectedSpecialization: _selectedSpec,
               errorMessage: _error,
-              onSelectSpecialization: (spec) => setState(() => _selectedSpec = spec),
+              onSelectSpecialization:
+                  (spec) => setState(() => _selectedSpec = spec),
               onSubmit: _findAndChat,
             ),
           ),
