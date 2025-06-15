@@ -10,9 +10,7 @@ import '../../services/poi_service.dart';
 import '../../services/session_service.dart';
 import '../../widgets/custom_bottom_nav.dart';
 import 'profile_info_form.dart';
-import 'role_poi_section.dart';
 import 'change_password_form.dart';
-import '../poi_search/poi_search_screen.dart';
 import '../login/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -76,13 +74,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> _pickPoi() async {
-    final poi = await Navigator.push<PoiModel?>(
-      context,
-      MaterialPageRoute(builder: (_) => const PoiSearchScreen()),
-    );
-    if (poi != null) setState(() => _selectedPoi = poi);
-  }
 
   Future<void> _saveProfile() async {
     if (_currentPassCtrl.text.isEmpty) {
@@ -249,18 +240,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     showTel: false,
                     showCurrentPass: false,
                   ),
-
-                  if (widget.user.role == 'doctor' ||
-                      widget.user.role == 'customer service') ...[
-                    const SizedBox(height: 20),
-                    RolePoiSection(
-                      role: widget.user.role,
-                      specCtrl: _specCtrl,
-                      selectedPoi: _selectedPoi,
-                      onPickPoi: _pickPoi,
-                      isDoctor: widget.user.role == 'doctor',
-                    ),
-                  ],
 
                   const SizedBox(height: 50),
 

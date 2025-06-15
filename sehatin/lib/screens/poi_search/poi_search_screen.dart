@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../models/poi_model.dart';
-import '../poi_registration/poi_registration_screen.dart';
 import 'poi_search_form.dart';
 import 'poi_result_list.dart';
 
@@ -30,12 +29,6 @@ class _PoiSearchScreenState extends State<PoiSearchScreen> {
     setState(() => _loading = value);
   }
 
-  void _createPoi() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const PoiRegistrationScreen()),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

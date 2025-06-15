@@ -13,13 +13,18 @@
         <label>Telephone:</label>
         <input type="text" ng-model="vm.admin.telno" required name="telno" />
       </div>
-
+      <div class="form-group">
+        <label>Current Email:</label>
+        <input type="email" ng-model="vm.currentEmailInfo" required name="currentEmailInfo" />
+      </div>
       <div class="form-group">
         <label>Current Password:</label>
         <input type="password" ng-model="vm.currentPasswordInfo" required name="currentPasswordInfo" />
       </div>
 
-      <button type="submit" ng-disabled="personalForm.$invalid">Update Info</button>
+      <button type="submit" ng-disabled="personalForm.$invalid || !vm.currentEmailInfo || !vm.currentPasswordInfo">
+        Update Info
+      </button>
     </form>
   </div>
 
@@ -52,17 +57,28 @@
       </div>
 
       <div class="form-group">
+        <label>Current Email:</label>
+        <input type="email" ng-model="vm.currentEmailPoi" required name="currentEmailPoi" />
+      </div>
+      <div class="form-group">
         <label>Current Password:</label>
         <input type="password" ng-model="vm.currentPasswordPoi" required name="currentPasswordPoi" />
       </div>
 
-      <button type="submit" ng-disabled="poiForm.$invalid || !vm.currentPasswordPoi">Update POI Info</button>
+      <button type="submit" ng-disabled="poiForm.$invalid || !vm.currentEmailPoi || !vm.currentPasswordPoi">
+        Update POI Info
+      </button>
     </form>
   </div>
 
   <div class="card">
     <h3>Change Password</h3>
     <form name="passwordForm" ng-submit="vm.updatePassword()" novalidate>
+      <div class="form-group">
+        <label>Current Email:</label>
+        <input type="email" ng-model="vm.currentEmailPwd" required name="currentEmailPwd" />
+      </div>
+
       <div class="form-group">
         <label>Current Password:</label>
         <input type="password" ng-model="vm.currentPasswordPwd" required name="currentPasswordPwd" />
@@ -82,14 +98,15 @@
         New passwords do not match.
       </div>
 
-      <button type="submit" ng-disabled="passwordForm.$invalid || vm.newPassword !== vm.confirmPassword">Change Password</button>
+      <button type="submit" ng-disabled="passwordForm.$invalid || vm.newPassword !== vm.confirmPassword || !vm.currentEmailPwd">
+        Change Password
+      </button>
     </form>
   </div>
 
-<div style="margin-top: 2rem;">
-  <button type="button" ng-click="vm.logout()" class="logout-btn">Logout</button>
-</div>
-
+  <div style="margin-top: 2rem;">
+    <button type="button" ng-click="vm.logout()" class="logout-btn">Logout</button>
+  </div>
 
   <div class="error" ng-if="vm.errorMessage">
     {{ vm.errorMessage }}
@@ -97,5 +114,4 @@
   <div class="success" ng-if="vm.successMessage">
     {{ vm.successMessage }}
   </div>
-
 </div>

@@ -252,7 +252,7 @@ class _ReviewTileState extends State<ReviewTile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Reviewee: ${user.username}',
+                      'Reviewing: ${user.username}',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,

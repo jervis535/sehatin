@@ -10,11 +10,18 @@
     vm.admin               = {};
     vm.poi                 = {};
     vm.isLevel2            = AuthService.getLevel() === '2';
+
+    vm.currentEmailInfo    = '';
     vm.currentPasswordInfo = '';
-    vm.currentPasswordPwd  = '';
+
+    vm.currentEmailPoi     = '';
     vm.currentPasswordPoi  = '';
+
+    vm.currentEmailPwd     = '';
+    vm.currentPasswordPwd  = '';
     vm.newPassword         = '';
     vm.confirmPassword     = '';
+
     vm.errorMessage        = '';
     vm.successMessage      = '';
 
@@ -48,7 +55,7 @@
       vm.errorMessage   = '';
       vm.successMessage = '';
 
-      AuthService.login(vm.admin.email, vm.currentPasswordInfo)
+      AuthService.login(vm.currentEmailInfo, vm.currentPasswordInfo)
         .then(() => {
           const payload = {
             poi_id: vm.isLevel2 ? vm.poi.id : null,
@@ -61,10 +68,11 @@
         .then(() => {
           vm.successMessage = 'Personal info updated.';
           vm.currentPasswordInfo = '';
+          vm.currentEmailInfo = '';
         })
         .catch(err => {
           if (err.status === 401) {
-            vm.errorMessage = 'Current password is incorrect.';
+            vm.errorMessage = 'Current password or email is incorrect.';
           } else {
             vm.errorMessage = 'Failed to update personal info.';
           }
@@ -75,12 +83,12 @@
       vm.errorMessage   = '';
       vm.successMessage = '';
 
-     if (!vm.currentPasswordPoi) {
-       vm.errorMessage = 'Enter current password to update POI.';
-       return;
-     }
+      if (!vm.currentPasswordPoi) {
+        vm.errorMessage = 'Enter current password to update POI.';
+        return;
+      }
 
-        AuthService.login(vm.admin.email, vm.currentPasswordPoi)
+      AuthService.login(vm.currentEmailPoi, vm.currentPasswordPoi)
         .then(() => {
           const payload = {
             name:      vm.poi.name,
@@ -93,11 +101,12 @@
         })
         .then(() => {
           vm.successMessage = 'POI info updated.';
-          vm.currentPasswordInfo = '';
+          vm.currentPasswordPoi = '';
+          vm.currentEmailPoi = '';
         })
         .catch(err => {
           if (err.status === 401) {
-            vm.errorMessage = 'Current password is incorrect.';
+            vm.errorMessage = 'Current password or email is incorrect.';
           } else {
             vm.errorMessage = 'Failed to update POI info.';
           }
@@ -113,14 +122,18 @@
         return;
       }
 
-      ApiService.changeAdminPassword(vm.admin.id, vm.currentPasswordPwd, vm.newPassword)
+      AuthService.login(vm.currentEmailPwd, vm.currentPasswordPwd)
+        .then(() => {
+          return ApiService.changeAdminPassword(vm.admin.id, vm.currentPasswordPwd, vm.newPassword);
+        })
         .then(() => {
           vm.successMessage = 'Password changed successfully.';
           vm.currentPasswordPwd = vm.newPassword = vm.confirmPassword = '';
+          vm.currentEmailPwd = '';
         })
         .catch(err => {
           if (err.status === 400 && err.data.error === 'Old password is incorrect') {
-            vm.errorMessage = 'Current password is incorrect.';
+            vm.errorMessage = 'Current password or email is incorrect.';
           } else {
             vm.errorMessage = 'Failed to change password.';
           }

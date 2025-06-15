@@ -225,7 +225,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                onPressed: _loading ? null : _pickPoiAndConnect,
+                onPressed: (_loading || _error == 'You already have an active service request.')
+                ? null
+                : _pickPoiAndConnect,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 52, 43, 182),
                   shape: RoundedRectangleBorder(
